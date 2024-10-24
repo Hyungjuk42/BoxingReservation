@@ -1,0 +1,62 @@
+/* https://velog.io/@pikadev1771/react-calendar-%EC%BB%A4%EC%8A%A4%ED%85%80%ED%95%98%EA%B8%B0-%EB%82%A0%EC%A7%9C-%EB%B3%80%ED%99%98-%ED%98%84%EC%9E%AC-%EB%8B%AC-%EA%B5%AC%ED%95%98%EA%B8%B0-%EC%BD%98%ED%85%90%EC%B8%A0-%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0 */
+
+.react-calendar__tile {
+  font-size: 1rem;
+}
+
+.react-calendar__tile.saturday {
+  color: #6560ff;
+}
+
+.react-calendar__tile.holiday {
+  color: #ff8349;
+}
+.react-calendar__navigation {
+  margin-top: 1rem;
+}
+
+.react-calendar__navigation span {
+  font-size: 20px;
+  font-weight: 600;
+  color: black;
+}
+
+.react-calendar {
+  border: none;
+}
+
+.react-calendar__month-view abbr {
+  text-decoration: none;
+}
+
+.react-calendar__tile {
+  text-align: center;
+  height: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: ease-in 0.3s;
+}
+/*hover, focus, 선택됐을 시 */
+.react-calendar__tile:enabled:hover {
+  background: rgb(212, 212, 227);
+  border-radius: 0.5rem;
+}
+
+.react-calendar__tile:enabled:focus,
+.react-calendar__tile--active {
+  background: rgb(161, 161, 226);
+  border-radius: 1.5rem;
+}
+
+.react-calendar__tile--now {
+  background: #33e378;
+  border-radius: 0.5rem;
+  transition: ease-in 0.3s;
+}
+/*hover, focus 시 */
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: #33e378;
+}
