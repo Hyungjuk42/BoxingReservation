@@ -11,6 +11,7 @@ import {
   SectionContextProvider,
 } from "@/app/context/section_context";
 import { axiosGetHolidayList } from "@/app/api/axios.custom";
+import WorkoutContent from "@/app/components/workout_content";
 
 function renderWorkoutManagementContent() {
   return <>Workout Management</>;
@@ -34,7 +35,7 @@ const Home: React.FC = () => {
         <SideBar />
         <div className="flex-1">
           {section === "reservation" && <ReservationContent />}
-          {section === "workout_management" && renderWorkoutManagementContent()}
+          {section === "workout_management" && <WorkoutContent />}
           {section === "user_management" && renderUserManagementContent()}
           {section === "setting" && renderSettingsContent()}
         </div>
