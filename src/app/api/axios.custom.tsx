@@ -9,26 +9,47 @@ const getNextMonth = (year: number, month: number) => {
   }
 };
 
-export const axiosGetScheduleList = async (year: number, month: number) => {
+export const dbGetScheduleList = async (date: string) => {
   try {
-    const response = await instance.get("/rest/v1/workouts", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      params: {
-        workout_date: [
-          `gte.${year}-${month}-01`,
-          `lt.${getNextMonth(year, month)}-01`,
-        ],
-      },
-    });
-    return response.data;
-    // const { data, error } = await supabase
-    //   .from("workouts")
-    //   .select()
-    //   .gte("workout_date", `${startDate}-01`)
-    //   .lt("workout_date", `${endDate}-01`);
-    // console.log(data, error);
+    const { data, error } = await supabase
+      .from("workouts")
+      .select()
+      .eq("workout_date", date);
+    // .gte("workout_date", `2024-10-28`)
+    // .lt("workout_date", `2024-11-32`);
+    console.log(data, error);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const dbGetAttendanceList = async (id: string) => {
+  try {
+    const { data: reservationsData, error } = await supabase
+      .from("reservations")
+      .select("id, user_id, attendance")
+      .eq("workout_id", id);
+
+    if (!reservationsData) {
+      return [];
+    }
+
+    const listData = await Promise.all(
+      reservationsData.map(async (item) => {
+        const { data: userData, error } = await supabase
+          .from("profiles")
+          .select("name")
+          .eq("id", item.user_id);
+
+        return {
+          name: userData?.[0].name,
+          ...item,
+        };
+      })
+    );
+    console.log(listData);
+    return listData;
   } catch (error) {
     return error;
   }

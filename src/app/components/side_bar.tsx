@@ -28,7 +28,14 @@ const SideBarBtn: React.FC<SideBarBtnProps> = (props: SideBarBtnProps) => {
             : "text-gray-600"
         }`}
       >
-        <img className="pr-2" src={props.iconSrc} />
+        <img
+          className="pr-2"
+          src={
+            section === props.section
+              ? `icon/${props.iconSrc}_primary.svg`
+              : `icon/${props.iconSrc}.svg`
+          }
+        />
         <span>{props.text}</span>
       </button>
     </li>
@@ -40,22 +47,22 @@ const SideBar: React.FC = () => {
     {
       section: "reservation",
       text: "예약 관리",
-      iconSrc: "icon/calendar.svg",
+      iconSrc: "calendar",
     },
     {
       section: "workout_management",
       text: "운동 관리",
-      iconSrc: "icon/muscle.svg",
+      iconSrc: "muscle",
     },
     {
       section: "user_management",
       text: "유저 관리",
-      iconSrc: "icon/user2.svg",
+      iconSrc: "user2",
     },
     {
       section: "setting",
       text: "설정",
-      iconSrc: "icon/setting.svg",
+      iconSrc: "setting",
     },
   ];
 
