@@ -12,6 +12,7 @@ import Button from "@/app/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
+import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
 import WorkoutManage from "./components/workout_manage";
 
 const getTime2Date = (dateString: string): string | null => {
@@ -169,6 +170,13 @@ const WorkoutContent: React.FC = () => {
             운동 추가
           </AddWorkoutBtn>
         </WorkoutManage>
+        <AddWorkoutsBtn
+          location={selectedLocation + 1}
+          rerender={getDefaultScheduleList}
+          default={true}
+        >
+          운동 배치하기
+        </AddWorkoutsBtn>
       </div>
     </div>
   );

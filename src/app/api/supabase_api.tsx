@@ -56,6 +56,15 @@ export const dbGetAttendanceList = async (id: string) => {
   }
 };
 
+export const dbGetUserList = async () => {
+  try {
+    const { data, error } = await supabase.from("profiles").select();
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const dbDeleteWorkoutSchedule = async (id: string) => {
   try {
     console.log(id);
@@ -84,6 +93,18 @@ export const dbDeleteDefaultSchedule = async (id: string) => {
       .delete()
       .eq("id", id);
     console.log(data, error);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const dbDeleteUser = async (id: string) => {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", id);
     return true;
   } catch (error) {
     return false;
