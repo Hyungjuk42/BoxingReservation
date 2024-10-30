@@ -1,14 +1,6 @@
 import { instance, holidayInstance } from "@/app/api/axios.instance";
 import supabase from "@/utils/supabase";
 
-const getNextMonth = (year: number, month: number) => {
-  if (month === 12) {
-    return `${year + 1}-01`;
-  } else {
-    return `${year}-${month + 1}`;
-  }
-};
-
 export const dbGetScheduleList = async (date: string) => {
   try {
     const { data, error } = await supabase
@@ -18,6 +10,15 @@ export const dbGetScheduleList = async (date: string) => {
     // .gte("workout_date", `2024-10-28`)
     // .lt("workout_date", `2024-11-32`);
     console.log(data, error);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const dbGetDefaultScheduleList = async () => {
+  try {
+    const { data, error } = await supabase.from("default_workouts").select();
     return data;
   } catch (error) {
     return error;
@@ -50,6 +51,62 @@ export const dbGetAttendanceList = async (id: string) => {
     );
     console.log(listData);
     return listData;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const dbDeleteWorkoutSchedule = async (id: string) => {
+  try {
+    console.log(id);
+    const { data, error } = await supabase
+      .from("workouts")
+      .delete()
+      .eq("id", id);
+    console.log(data, error);
+
+    const { data: reservationsData, error: reservationsError } = await supabase
+      .from("reservations")
+      .delete()
+      .eq("workout_id", id);
+    console.log(reservationsData, reservationsError);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const dbDeleteDefaultSchedule = async (id: string) => {
+  try {
+    console.log(id);
+    const { data, error } = await supabase
+      .from("default_workouts")
+      .delete()
+      .eq("id", id);
+    console.log(data, error);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const dbInsertWorkoutSchedule = async (newData: any) => {
+  try {
+    const { data, error } = await supabase.from("workouts").insert([newData]);
+    console.log(data, error);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const dbInsertDefaultWorkoutSchedule = async (newData: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("default_workouts")
+      .insert([newData]);
+    console.log(data, error);
+    return data;
   } catch (error) {
     return error;
   }
