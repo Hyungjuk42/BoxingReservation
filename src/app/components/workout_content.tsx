@@ -1,16 +1,27 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
-import { dbGetScheduleList, dbGetAttendanceList } from "@/app/api/axios.custom";
+import {
+  dbGetScheduleList,
+  dbDeleteWorkoutSchedule,
+  dbDeleteDefaultSchedule,
+  dbGetDefaultScheduleList,
+} from "@/app/api/axios.custom";
 
 import Button from "@/app/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
+import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 
 const getTime2Date = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
+};
+
+const getTime2Time = (timeString: string): string | null => {
+  const match = timeString.match(/^(\d{1,2}:\d{2})/);
+  return match ? match[1] : null;
 };
 
 const getDateForm2Date = (date: Date) => {
@@ -26,25 +37,44 @@ const WorkoutContent: React.FC = () => {
     locations.length === 0 ? null : 0
   );
 
-  const [loading, setLoading] = useState(true);
-
   const scheduleListRef = useRef([]);
+  const defaultScheduleListRef = useRef([]);
 
-  const [attendance, setAttendance] = useState([]);
+  const [dayScheduleList, setDayScheduleList] = useState([]);
+
+  const getDayScheduleList = async () => {
+    scheduleListRef.current = await dbGetScheduleList(
+      getDateForm2Date(selectedDate)
+    );
+    setDayScheduleList(
+      scheduleListRef.current.filter(
+        (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+      )
+    );
+  };
+
+  const dayDefaultScheduleList = defaultScheduleListRef.current?.filter(
+    (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+  );
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      scheduleListRef.current = await dbGetScheduleList(
-        getDateForm2Date(selectedDate)
-      );
-      setLoading(false);
+      defaultScheduleListRef.current = await dbGetDefaultScheduleList();
+      console.log(defaultScheduleListRef.current);
     })();
+  }, []);
+
+  useEffect(() => {
+    getDayScheduleList();
   }, [selectedDate]);
 
-  const dayScheduleList = scheduleListRef.current.filter(
-    (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
-  );
+  useEffect(() => {
+    setDayScheduleList(
+      scheduleListRef.current.filter(
+        (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+      )
+    );
+  }, [selectedLocation]);
 
   return (
     <div className="flex h-full">
@@ -83,7 +113,23 @@ const WorkoutContent: React.FC = () => {
                     <p>{schedule.workout_name}</p>
                     <img
                       className="w-6 h-6 p-1 cursor-pointer"
-                      onClick={() => console.log("click")}
+                      onClick={() => {
+                        dbDeleteWorkoutSchedule(schedule.id).then((res) => {
+                          if (res) {
+                            scheduleListRef.current =
+                              scheduleListRef.current.filter(
+                                (item: any) => item.id !== schedule.id
+                              );
+                            setDayScheduleList(
+                              scheduleListRef.current.filter(
+                                (schedule: any) =>
+                                  (selectedLocation ?? -1) + 1 ===
+                                  schedule.location_id
+                              )
+                            );
+                          }
+                        });
+                      }}
                       src="icon/cancel.svg"
                     />
                   </div>
@@ -97,13 +143,58 @@ const WorkoutContent: React.FC = () => {
             <p>선택된 날짜에 스케줄이 없습니다.</p>
           )}
 
-          <ButtonSm handleClick={() => console.log("click")}>
+          <AddWorkoutBtn
+            date={selectedDate}
+            location={(selectedLocation ?? -1) + 1}
+            rerender={getDayScheduleList}
+          >
             운동 추가
-          </ButtonSm>
+          </AddWorkoutBtn>
         </div>
       </div>
       <div className="w-1/3 px-4 my-4">
         <h2 className="text-xl font-bold mb-4">기본 시간대</h2>
+        <div className="flex flex-1 flex-col justify-between">
+          {defaultScheduleListRef.current.length > 0 ? (
+            <ul className="space-y-2">
+              {dayDefaultScheduleList.map((schedule: any, index: number) => (
+                <li
+                  key={index}
+                  className={`p-2 border border-solid rounded border-gray-300`}
+                >
+                  <p className="font-semibold">
+                    {getTime2Time(schedule.start_time)}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <p>{schedule.workout_name}</p>
+                    <img
+                      className="w-6 h-6 p-1 cursor-pointer"
+                      onClick={() => {
+                        dbDeleteDefaultSchedule(schedule.id).then((res) => {
+                          if (res) {
+                            defaultScheduleListRef.current =
+                              defaultScheduleListRef.current.filter(
+                                (item: any) => item.kd !== schedule.id
+                              );
+                          }
+                        });
+                      }}
+                      src="icon/cancel.svg"
+                    />
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {schedule.duration}시간짜리 운동
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>기본 스케줄이 없습니다.</p>
+          )}
+          <AddWorkoutBtn rerender={getDayScheduleList}>
+            시간대 추가
+          </AddWorkoutBtn>
+        </div>
       </div>
     </div>
   );
