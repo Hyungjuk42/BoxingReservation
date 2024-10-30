@@ -1,14 +1,6 @@
 import { instance, holidayInstance } from "@/app/api/axios.instance";
 import supabase from "@/utils/supabase";
 
-const getNextMonth = (year: number, month: number) => {
-  if (month === 12) {
-    return `${year + 1}-01`;
-  } else {
-    return `${year}-${month + 1}`;
-  }
-};
-
 export const dbGetScheduleList = async (date: string) => {
   try {
     const { data, error } = await supabase
@@ -101,6 +93,18 @@ export const dbDeleteDefaultSchedule = async (id: string) => {
 export const dbInsertWorkoutSchedule = async (newData: any) => {
   try {
     const { data, error } = await supabase.from("workouts").insert([newData]);
+    console.log(data, error);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const dbInsertDefaultWorkoutSchedule = async (newData: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("default_workouts")
+      .insert([newData]);
     console.log(data, error);
     return data;
   } catch (error) {

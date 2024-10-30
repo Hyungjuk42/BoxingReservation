@@ -1,10 +1,14 @@
-import { dbInsertWorkoutSchedule } from "@/app/api/axios.custom";
+import {
+  dbInsertDefaultWorkoutSchedule,
+  dbInsertWorkoutSchedule,
+} from "@/app/api/supabase_api";
 import React, { useState } from "react";
 
 export default function AddWorkoutBtn(props: {
   date: Date;
   location: number | null;
   rerender: () => void;
+  default: boolean;
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,16 +46,24 @@ export default function AddWorkoutBtn(props: {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const workout_date = props.date.toLocaleDateString("en-CA");
-    const start_time = `${workout_date}T${formData.start_time}`;
-    const newData = {
-      ...formData,
-      workout_date: workout_date,
-      start_time: start_time,
-      location_id: props.location,
-    };
-    console.log(newData, props.location);
-    await dbInsertWorkoutSchedule(newData);
+    if (props.default) {
+      const newData = {
+        ...formData,
+        location_id: props.location,
+      };
+      await dbInsertDefaultWorkoutSchedule(newData);
+    } else {
+      const workout_date = props.date.toLocaleDateString("en-CA");
+      const start_time = `${workout_date}T${formData.start_time}`;
+      const newData = {
+        ...formData,
+        workout_date: workout_date,
+        start_time: start_time,
+        location_id: props.location,
+      };
+      console.log(newData, props.location);
+      await dbInsertWorkoutSchedule(newData);
+    }
     closeModal();
     props.rerender();
   }

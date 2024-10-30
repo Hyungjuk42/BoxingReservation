@@ -1,4 +1,4 @@
-import { dbInsertWorkoutSchedule } from "@/app/api/axios.custom";
+import { dbInsertWorkoutSchedule } from "@/app/api/supabase_api";
 import React, { useState } from "react";
 
 export default function AddWorkoutBtn(props: {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
-import { dbGetScheduleList, dbGetAttendanceList } from "@/app/api/axios.custom";
+import { dbGetScheduleList, dbGetAttendanceList } from "@/app/api/supabase_api";
 
 import Button from "@/app/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
