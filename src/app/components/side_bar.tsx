@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useSectionContext } from "@/app/context/section_context";
-import Image from "next/image";
 
 interface SideBarBtnProps {
   section: string;
