@@ -31,10 +31,10 @@ instance.interceptors.request.use(
   }
 );
 
-export const holidayInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HOLIDAY_API_URL,
-  withCredentials: true,
-});
+// export const holidayInstance = axios.create({
+//   baseURL: process.env.NEXT_PUBLIC_HOLIDAY_API_URL,
+//   withCredentials: true,
+// });
 
 // instance.interceptors.request.use(async (config) => {
 //   return config;

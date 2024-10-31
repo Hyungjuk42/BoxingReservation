@@ -113,25 +113,25 @@ export const dbInsertDefaultWorkoutSchedule = async (newData: object) => {
   return data;
 };
 
-export const axiosGetHolidayList = async () => {
-  let queryParams =
-    "?" +
-    encodeURIComponent("serviceKey") +
-    "=" +
-    process.env.NEXT_PUBLIC_HOLIDAY_API_KEY;
-  queryParams +=
-    "&" + encodeURIComponent("pageNo") + "=" + encodeURIComponent("1"); /**/
-  queryParams +=
-    "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("30"); /**/
-  queryParams +=
-    "&" + encodeURIComponent("solYear") + "=" + encodeURIComponent("2019"); /**/
-  queryParams +=
-    "&" + encodeURIComponent("solMonth") + "=" + encodeURIComponent("02"); /**/
-  try {
-    const response = await holidayInstance.get(queryParams);
-    console.log(response);
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
+// export const axiosGetHolidayList = async () => {
+//   let queryParams =
+//     "?" +
+//     encodeURIComponent("serviceKey") +
+//     "=" +
+//     process.env.NEXT_PUBLIC_HOLIDAY_API_KEY;
+//   queryParams +=
+//     "&" + encodeURIComponent("pageNo") + "=" + encodeURIComponent("1"); /**/
+//   queryParams +=
+//     "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("30"); /**/
+//   queryParams +=
+//     "&" + encodeURIComponent("solYear") + "=" + encodeURIComponent("2019"); /**/
+//   queryParams +=
+//     "&" + encodeURIComponent("solMonth") + "=" + encodeURIComponent("02"); /**/
+//   try {
+//     const response = await holidayInstance.get(queryParams);
+//     console.log(response);
+//     return response;
+//   } catch (error) {
+//     return error;
+//   }
+// };
