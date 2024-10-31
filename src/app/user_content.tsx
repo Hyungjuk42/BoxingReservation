@@ -1,15 +1,16 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { dbDeleteUser, dbGetUserList } from "./api/supabase_api";
+import { User } from "@/app/interfaces/interfaces";
 
-import DeleteButtonSm from "./components/ui/delete_button_sm";
+import DeleteButtonSm from "@/app/components/ui/delete_button_sm";
 
 const UserContent = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<Array<any>>([]);
+  const [users, setUsers] = useState<Array<User>>([]);
 
   const getCurrentUser = async () => {
-    const userList = (await dbGetUserList()) as Array<any>;
+    const userList = (await dbGetUserList()) as Array<User>;
     setUsers(userList);
   };
 

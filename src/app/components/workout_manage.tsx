@@ -1,11 +1,12 @@
 import React from "react";
-import AddWorkoutBtn from "./ui/add_workout_btn";
+import Image from "next/image";
+import { Schedule } from "@/app/interfaces/interfaces";
 
 export default function WorkoutManage(props: {
   title: string;
-  scheduleList: Array<any>;
+  scheduleList: Array<Schedule>;
   getTime: (str: string) => string | null;
-  handleDeleteSchedule: (schedule: any) => void;
+  handleDeleteSchedule: (schedule: Schedule) => void;
   children: React.ReactNode;
 }) {
   return (
@@ -14,7 +15,7 @@ export default function WorkoutManage(props: {
       <div className="flex flex-1 flex-col justify-between">
         {props.scheduleList.length > 0 ? (
           <ul className="space-y-2">
-            {props.scheduleList.map((schedule: any, index: number) => (
+            {props.scheduleList.map((schedule: Schedule, index: number) => (
               <li
                 key={index}
                 className={`p-2 border border-solid rounded border-gray-300`}
@@ -24,14 +25,15 @@ export default function WorkoutManage(props: {
                 </p>
                 <div className="flex justify-between items-center">
                   <p>{schedule.workout_name}</p>
-                  <img
+                  <Image
                     className="w-6 h-6 p-1 cursor-pointer"
                     onClick={() => props.handleDeleteSchedule(schedule)}
                     src="icon/cancel.svg"
+                    alt="DeleteIcon"
                   />
                 </div>
                 <p className="text-sm text-gray-500">
-                  {schedule.duration}시간짜리 운동
+                  {schedule.duration}분짜리 운동
                 </p>
               </li>
             ))}

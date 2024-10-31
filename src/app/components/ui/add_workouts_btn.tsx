@@ -45,12 +45,8 @@ export default function AddWorkoutsBtn(props: {
       };
       await dbInsertDefaultWorkoutSchedule(newData);
     } else {
-      const workout_date = props.date.toLocaleDateString("en-CA");
-      const start_time = `${workout_date}T${formData.start_time}`;
       const newData = {
         ...formData,
-        workout_date: workout_date,
-        start_time: start_time,
         location_id: props.location,
       };
       console.log(newData, props.location);

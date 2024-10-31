@@ -1,136 +1,116 @@
-import { instance, holidayInstance } from "@/app/api/axios.instance";
+import { holidayInstance } from "@/app/api/axios.instance";
 import supabase from "@/utils/supabase";
 
 export const dbGetScheduleList = async (date: string) => {
-  try {
-    const { data, error } = await supabase
-      .from("workouts")
-      .select()
-      .eq("workout_date", date);
-    // .gte("workout_date", `2024-10-28`)
-    // .lt("workout_date", `2024-11-32`);
-    console.log(data, error);
-    return data;
-  } catch (error) {
+  const { data, error } = await supabase
+    .from("workouts")
+    .select()
+    .eq("workout_date", date);
+  if (error) {
     return error;
   }
+  return data;
 };
 
 export const dbGetDefaultScheduleList = async () => {
-  try {
-    const { data, error } = await supabase.from("default_workouts").select();
-    return data;
-  } catch (error) {
+  const { data, error } = await supabase.from("default_workouts").select();
+  if (error) {
     return error;
   }
+  return data;
 };
 
 export const dbGetAttendanceList = async (id: string) => {
-  try {
-    const { data: reservationsData, error } = await supabase
-      .from("reservations")
-      .select("id, user_id, attendance")
-      .eq("workout_id", id);
+  const { data: reservationsData, error } = await supabase
+    .from("reservations")
+    .select("id, user_id, attendance")
+    .eq("workout_id", id);
 
-    if (!reservationsData) {
-      return [];
-    }
-
-    const listData = await Promise.all(
-      reservationsData.map(async (item) => {
-        const { data: userData, error } = await supabase
-          .from("profiles")
-          .select("name")
-          .eq("id", item.user_id);
-
-        return {
-          name: userData?.[0].name,
-          ...item,
-        };
-      })
-    );
-    console.log(listData);
-    return listData;
-  } catch (error) {
-    return error;
+  if (!reservationsData || error) {
+    return [];
   }
+
+  const listData = await Promise.all(
+    reservationsData.map(async (item) => {
+      const { data: userData } = await supabase
+        .from("profiles")
+        .select("name")
+        .eq("id", item.user_id);
+
+      return {
+        name: userData?.[0].name,
+        ...item,
+      };
+    })
+  );
+  console.log(listData);
+  return listData;
 };
 
 export const dbGetUserList = async () => {
-  try {
-    const { data, error } = await supabase.from("profiles").select();
-    return data;
-  } catch (error) {
+  const { data, error } = await supabase.from("profiles").select();
+  if (error) {
     return error;
   }
+  return data;
 };
 
 export const dbDeleteWorkoutSchedule = async (id: string) => {
-  try {
-    console.log(id);
-    const { data, error } = await supabase
-      .from("workouts")
-      .delete()
-      .eq("id", id);
-    console.log(data, error);
-
-    const { data: reservationsData, error: reservationsError } = await supabase
-      .from("reservations")
-      .delete()
-      .eq("workout_id", id);
-    console.log(reservationsData, reservationsError);
-    return true;
-  } catch (error) {
+  console.log(id);
+  const { data, error } = await supabase.from("workouts").delete().eq("id", id);
+  if (error) {
+    console.log(data);
     return false;
   }
+
+  const { data: reservationsData, error: reservationsError } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("workout_id", id);
+  if (reservationsError) {
+    console.log(reservationsData);
+    return false;
+  }
+  return true;
 };
 
 export const dbDeleteDefaultSchedule = async (id: string) => {
-  try {
-    console.log(id);
-    const { data, error } = await supabase
-      .from("default_workouts")
-      .delete()
-      .eq("id", id);
-    console.log(data, error);
-    return true;
-  } catch (error) {
+  const { data, error } = await supabase
+    .from("default_workouts")
+    .delete()
+    .eq("id", id);
+  if (error) {
+    console.log(data);
     return false;
   }
+  return true;
 };
 
 export const dbDeleteUser = async (id: string) => {
-  try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .delete()
-      .eq("id", id);
-    return true;
-  } catch (error) {
+  const { data, error } = await supabase.from("profiles").delete().eq("id", id);
+  if (error) {
+    console.log(data);
     return false;
   }
+  return true;
 };
 
-export const dbInsertWorkoutSchedule = async (newData: any) => {
-  try {
-    const { data, error } = await supabase.from("workouts").insert([newData]);
-    console.log(data, error);
-    return data;
-  } catch (error) {
+export const dbInsertWorkoutSchedule = async (newData: object) => {
+  const { data, error } = await supabase.from("workouts").insert([newData]);
+  if (error) {
     return error;
   }
+  return data;
 };
 
-export const dbInsertDefaultWorkoutSchedule = async (newData: any) => {
-  try {
-    const { data, error } = await supabase
-      .from("default_workouts")
-      .insert([newData]);
-    console.log(data, error);
-    return data;
-  } catch (error) {
+export const dbInsertDefaultWorkoutSchedule = async (newData: object) => {
+  const { data, error } = await supabase
+    .from("default_workouts")
+    .insert([newData]);
+  if (error) {
     return error;
   }
+  return data;
 };
 
 export const axiosGetHolidayList = async () => {
