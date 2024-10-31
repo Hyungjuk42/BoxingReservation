@@ -28,7 +28,7 @@ const SideBarBtn: React.FC<SideBarBtnProps> = (props: SideBarBtnProps) => {
             : "text-gray-600"
         }`}
       >
-        <Image
+        <img
           className="pr-2"
           src={
             section === props.section

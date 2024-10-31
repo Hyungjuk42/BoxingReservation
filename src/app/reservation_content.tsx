@@ -24,8 +24,8 @@ const locations = ["교대 잽트레이닝", "역삼 잽트레이닝", "선릉 �
 const ReservationContent: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const [selectedLocation, setSelectedLocation] = useState<number | null>(
-    locations.length === 0 ? null : 0
+  const [selectedLocation, setSelectedLocation] = useState<number>(
+    locations.length === 0 ? -1 : 0
   );
 
   const scheduleListRef = useRef<Array<Schedule>>([]);
