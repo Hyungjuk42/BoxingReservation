@@ -40,16 +40,16 @@ instance.interceptors.request.use(
 //   return config;
 // });
 
-holidayInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (
-      error.response?.status === STATUS_401_UNAUTHORIZED ||
-      error.response?.status === STATUS_403_FORBIDDEN
-    ) {
-    }
-    return Promise.reject(error);
-  }
-);
+// holidayInstance.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   (error) => {
+//     if (
+//       error.response?.status === STATUS_401_UNAUTHORIZED ||
+//       error.response?.status === STATUS_403_FORBIDDEN
+//     ) {
+//     }
+//     return Promise.reject(error);
+//   }
+// );
