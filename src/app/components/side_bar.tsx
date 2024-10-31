@@ -1,8 +1,8 @@
 "use client";
 
-import React, { MouseEventHandler } from "react";
-import { useState } from "react";
+import React from "react";
 import { useSectionContext } from "@/app/context/section_context";
+import Image from "next/image";
 
 interface SideBarBtnProps {
   section: string;
@@ -28,13 +28,14 @@ const SideBarBtn: React.FC<SideBarBtnProps> = (props: SideBarBtnProps) => {
             : "text-gray-600"
         }`}
       >
-        <img
+        <Image
           className="pr-2"
           src={
             section === props.section
               ? `icon/${props.iconSrc}_primary.svg`
               : `icon/${props.iconSrc}.svg`
           }
+          alt="Icon"
         />
         <span>{props.text}</span>
       </button>

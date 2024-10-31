@@ -9,7 +9,6 @@ import {
   useSectionContext,
   SectionContextProvider,
 } from "@/app/context/section_context";
-import { axiosGetHolidayList } from "@/app/api/supabase_api";
 import ReservationContent from "@/app/reservation_content";
 import WorkoutContent from "@/app/workout_content";
 import UserContent from "@/app/user_content";
@@ -19,7 +18,7 @@ function renderSettingsContent() {
 }
 
 const Home: React.FC = () => {
-  const { section, setSection } = useSectionContext();
+  const { section } = useSectionContext();
 
   return (
     <div className="flex flex-col h-screen">

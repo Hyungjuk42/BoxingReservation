@@ -8,8 +8,9 @@ import {
   dbGetDefaultScheduleList,
 } from "@/app/api/supabase_api";
 
+import { Schedule } from "@/app/interfaces/interfaces";
+
 import Button from "@/app/components/ui/button";
-import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
@@ -40,29 +41,36 @@ const WorkoutContent: React.FC = () => {
     locations.length === 0 ? -1 : 0
   );
 
-  const scheduleListRef = useRef([]);
-  const defaultScheduleListRef = useRef([]);
+  const scheduleListRef = useRef<Array<Schedule>>([]);
+  const defaultScheduleListRef = useRef<Array<Schedule>>([]);
 
-  const [dayScheduleList, setDayScheduleList] = useState([]);
+  const [dayScheduleList, setDayScheduleList] = useState<Array<Schedule>>([]);
 
   const getDayScheduleList = async () => {
-    scheduleListRef.current = await dbGetScheduleList(
-      getDateForm2Date(selectedDate)
-    );
+    const res = await dbGetScheduleList(getDateForm2Date(selectedDate));
+    if (res && !(res instanceof Error)) {
+      scheduleListRef.current = res;
+    }
     setDayScheduleList(
       scheduleListRef.current.filter(
-        (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+        (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
       )
     );
   };
 
-  const [dayDefaultScheduleList, setDayDefaultScheduleList] = useState([]);
+  const [dayDefaultScheduleList, setDayDefaultScheduleList] = useState<
+    Array<Schedule>
+  >([]);
 
   const getDefaultScheduleList = async () => {
-    defaultScheduleListRef.current = await dbGetDefaultScheduleList();
+    const res = await dbGetDefaultScheduleList();
+    if (res && !(res instanceof Error)) {
+      defaultScheduleListRef.current = res;
+    }
     setDayDefaultScheduleList(
       defaultScheduleListRef.current.filter(
-        (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+        (schedule: Schedule) =>
+          (selectedLocation ?? -1) + 1 === schedule.location_id
       )
     );
   };
@@ -78,12 +86,13 @@ const WorkoutContent: React.FC = () => {
   useEffect(() => {
     setDayScheduleList(
       scheduleListRef.current.filter(
-        (schedule: any) => selectedLocation + 1 === schedule.location_id
+        (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
       )
     );
     setDayDefaultScheduleList(
       defaultScheduleListRef.current.filter(
-        (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+        (schedule: Schedule) =>
+          (selectedLocation ?? -1) + 1 === schedule.location_id
       )
     );
   }, [selectedLocation]);
@@ -117,11 +126,11 @@ const WorkoutContent: React.FC = () => {
             dbDeleteWorkoutSchedule(schedule.id).then((res) => {
               if (res) {
                 scheduleListRef.current = scheduleListRef.current.filter(
-                  (item: any) => item.id !== schedule.id
+                  (item: Schedule) => item.id !== schedule.id
                 );
                 setDayScheduleList(
                   scheduleListRef.current.filter(
-                    (schedule: any) =>
+                    (schedule: Schedule) =>
                       selectedLocation + 1 === schedule.location_id
                   )
                 );
@@ -144,16 +153,16 @@ const WorkoutContent: React.FC = () => {
           title="기본 시간대"
           scheduleList={dayDefaultScheduleList}
           getTime={getTime2Time}
-          handleDeleteSchedule={(schedule) => {
+          handleDeleteSchedule={(schedule: Schedule) => {
             dbDeleteDefaultSchedule(schedule.id).then((res) => {
               if (res) {
                 defaultScheduleListRef.current =
                   defaultScheduleListRef.current.filter(
-                    (item: any) => item.id !== schedule.id
+                    (item: Schedule) => item.id !== schedule.id
                   );
                 setDayDefaultScheduleList(
                   defaultScheduleListRef.current.filter(
-                    (schedule: any) =>
+                    (schedule: Schedule) =>
                       selectedLocation + 1 === schedule.location_id
                   )
                 );

@@ -7,6 +7,8 @@ import Button from "@/app/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 
+import { Attendee, Schedule } from "@/app/interfaces/interfaces";
+
 const getTime2Date = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -26,29 +28,33 @@ const ReservationContent: React.FC = () => {
     locations.length === 0 ? null : 0
   );
 
-  const [loading, setLoading] = useState(true);
+  const scheduleListRef = useRef<Array<Schedule>>([]);
 
-  const scheduleListRef = useRef([]);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule>({
+    id: "",
+    location_id: 0,
+    start_time: "",
+    workout_name: "",
+    duration: 0,
+  });
 
-  const [selectedSchedule, setSelectedSchedule] = useState({});
-
-  const [attendance, setAttendance] = useState([]);
+  const [attendance, setAttendance] = useState<Array<Attendee>>([]);
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      scheduleListRef.current = await dbGetScheduleList(
-        getDateForm2Date(selectedDate)
-      );
-      setLoading(false);
+      const res = await dbGetScheduleList(getDateForm2Date(selectedDate));
+      if (res && !(res instanceof Error)) {
+        scheduleListRef.current = res;
+      }
     })();
   }, [selectedDate]);
 
-  const handleSelectSchedule = (selectedSchedule: any) => {
+  const handleSelectSchedule = (selectedSchedule: Schedule) => {
     setSelectedSchedule(selectedSchedule);
     if (scheduleListRef.current.length > 0) {
       const schedule = scheduleListRef.current.find(
-        (schedule: any) => schedule.start_time === selectedSchedule.start_time
+        (schedule: Schedule) =>
+          schedule.start_time === selectedSchedule.start_time
       );
       if (schedule) {
         (async () => {
@@ -59,7 +65,7 @@ const ReservationContent: React.FC = () => {
     }
   };
 
-  const toggleAttendance = (attendee: any, index: number) => {
+  const toggleAttendance = (attendee: Attendee, index: number) => {
     console.log(attendee.attendance);
     const item = { ...attendee, attendance: !attendee.attendance };
     console.log(item);
@@ -71,7 +77,8 @@ const ReservationContent: React.FC = () => {
   };
 
   const dayScheduleList = scheduleListRef.current.filter(
-    (schedule: any) => (selectedLocation ?? -1) + 1 === schedule.location_id
+    (schedule: Schedule) =>
+      (selectedLocation ?? -1) + 1 === schedule.location_id
   );
 
   return (
@@ -99,7 +106,7 @@ const ReservationContent: React.FC = () => {
         <h2 className="text-xl font-bold mb-4">운동 스케줄</h2>
         {scheduleListRef.current.length > 0 ? (
           <ul className="space-y-2">
-            {dayScheduleList.map((schedule: any, index: number) => (
+            {dayScheduleList.map((schedule: Schedule, index: number) => (
               <li
                 key={index}
                 className={`p-2 border border-solid rounded cursor-pointer hover:bg-gray-100 ${
@@ -114,7 +121,7 @@ const ReservationContent: React.FC = () => {
                 </p>
                 <p>{schedule.workout_name}</p>
                 <p className="text-sm text-gray-500">
-                  {schedule.duration}시간짜리 운동
+                  {schedule.duration}분짜리 운동
                 </p>
               </li>
             ))}
@@ -127,7 +134,7 @@ const ReservationContent: React.FC = () => {
         <h2 className="text-xl font-bold mb-4">출석 관리</h2>
         {selectedSchedule ? (
           <ul className="space-y-2">
-            {attendance.map((attendee: any, index: number) => (
+            {attendance.map((attendee: Attendee, index: number) => (
               <li
                 key={index}
                 className="flex justify-between items-center p-2 border-b border-solid border-gray-200"
