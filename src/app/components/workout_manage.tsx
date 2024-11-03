@@ -29,6 +29,8 @@ export default function WorkoutManage(props: {
                     className="w-6 h-6 p-1 cursor-pointer"
                     onClick={() => props.handleDeleteSchedule(schedule)}
                     src="icon/cancel.svg"
+                    width={24}
+                    height={24}
                     alt="DeleteIcon"
                   />
                 </div>

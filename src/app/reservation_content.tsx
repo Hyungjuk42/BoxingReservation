@@ -85,7 +85,6 @@ const ReservationContent: React.FC = () => {
     <div className="flex h-full">
       <div className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
         <ReactCalendar date={selectedDate} setDate={setSelectedDate} />
-        {"달력 들어갈 자리"}
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
