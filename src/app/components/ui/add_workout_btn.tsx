@@ -1,6 +1,6 @@
 import {
-  dbInsertDefaultWorkoutSchedule,
-  dbInsertWorkoutSchedule,
+  dbInsertDefaultWorkout2DefaultWorkouts,
+  dbInsertWorkout2Workouts,
 } from "@/app/api/supabase_api";
 import React, { useState } from "react";
 
@@ -15,7 +15,6 @@ export default function AddWorkoutBtn(props: {
   const [formData, setFormData] = useState({
     workout_name: "",
     start_time: "",
-    duration: "",
     location_id: "",
   });
 
@@ -32,11 +31,6 @@ export default function AddWorkoutBtn(props: {
       type: "time",
       placeholder: "시작 시간",
     },
-    {
-      id: "duration",
-      type: "number",
-      placeholder: "운동 시간",
-    },
   ];
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -51,7 +45,7 @@ export default function AddWorkoutBtn(props: {
         ...formData,
         location_id: props.location,
       };
-      await dbInsertDefaultWorkoutSchedule(newData);
+      await dbInsertDefaultWorkout2DefaultWorkouts(newData);
     } else {
       const workout_date = props.date.toLocaleDateString("en-CA");
       const start_time = `${workout_date}T${formData.start_time}`;
@@ -62,7 +56,7 @@ export default function AddWorkoutBtn(props: {
         location_id: props.location,
       };
       console.log(newData, props.location);
-      await dbInsertWorkoutSchedule(newData);
+      await dbInsertWorkout2Workouts(newData);
     }
     closeModal();
     props.rerender();

@@ -34,9 +34,6 @@ export default function WorkoutManage(props: {
                     alt="DeleteIcon"
                   />
                 </div>
-                <p className="text-sm text-gray-500">
-                  {schedule.duration}분짜리 운동
-                </p>
               </li>
             ))}
           </ul>
