@@ -1,7 +1,10 @@
 import React from "react";
 import Image from "next/image";
+import { useAuth } from "@/app/api/login";
+import { sign } from "crypto";
 
 export default function TopNavBar() {
+  const { signOut } = useAuth();
   return (
     <nav className="flex items-center justify-between px-4 py-2 bg-white border-b-2 border-solid border-gray-200">
       <div>
@@ -15,10 +18,11 @@ export default function TopNavBar() {
       </div>
       <div>
         <Image
+          onClick={signOut}
           width={40}
           height={40}
-          className="h-10"
-          src="/icon/user.svg"
+          className="h-10 p-1 cursor-pointer"
+          src="/icon/exit.svg"
           alt="UserIcon"
         />
       </div>

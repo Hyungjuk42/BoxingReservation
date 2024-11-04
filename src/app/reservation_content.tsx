@@ -9,6 +9,8 @@ import ReactCalendar from "@/app/components/ui/react_calendar";
 
 import { Attendee, Schedule } from "@/app/interfaces/interfaces";
 
+import { locations } from "@/app/constants/data";
+
 const getTime2Date = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -18,8 +20,6 @@ const getTime2Date = (date: Date) => {
 const getDateForm2Date = (date: Date) => {
   return date.toLocaleDateString("en-CA");
 };
-
-const locations = ["교대 잽트레이닝", "역삼 잽트레이닝", "선릉 잽트레이닝"];
 
 const ReservationContent: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -35,7 +35,6 @@ const ReservationContent: React.FC = () => {
     location_id: 0,
     start_time: "",
     workout_name: "",
-    duration: 0,
   });
 
   const [attendance, setAttendance] = useState<Array<Attendee>>([]);
@@ -85,7 +84,6 @@ const ReservationContent: React.FC = () => {
     <div className="flex h-full">
       <div className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
         <ReactCalendar date={selectedDate} setDate={setSelectedDate} />
-        {"달력 들어갈 자리"}
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
@@ -120,9 +118,6 @@ const ReservationContent: React.FC = () => {
                   {getTime2Date(new Date(schedule.start_time))}
                 </p>
                 <p>{schedule.workout_name}</p>
-                <p className="text-sm text-gray-500">
-                  {schedule.duration}분짜리 운동
-                </p>
               </li>
             ))}
           </ul>

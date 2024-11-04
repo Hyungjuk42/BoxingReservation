@@ -15,6 +15,7 @@ import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
 import WorkoutManage from "./components/workout_manage";
+import { locations } from "@/app/constants/data";
 
 const getTime2Date = (dateString: string): string | null => {
   const date = new Date(dateString);
@@ -32,8 +33,6 @@ const getDateForm2Date = (date: Date) => {
   return date.toLocaleDateString("en-CA");
 };
 
-const locations = ["교대 잽트레이닝", "역삼 잽트레이닝", "선릉 잽트레이닝"];
-
 const WorkoutContent: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -49,7 +48,11 @@ const WorkoutContent: React.FC = () => {
   const getDayScheduleList = async () => {
     const res = await dbGetScheduleList(getDateForm2Date(selectedDate));
     if (res && !(res instanceof Error)) {
-      scheduleListRef.current = res;
+      scheduleListRef.current = res.sort((a, b) => {
+        return (
+          new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+        );
+      });
     }
     setDayScheduleList(
       scheduleListRef.current.filter(
@@ -65,7 +68,14 @@ const WorkoutContent: React.FC = () => {
   const getDefaultScheduleList = async () => {
     const res = await dbGetDefaultScheduleList();
     if (res && !(res instanceof Error)) {
-      defaultScheduleListRef.current = res;
+      defaultScheduleListRef.current = res.sort((a, b) => {
+        return a.start_time > b.start_time
+          ? 1
+          : a.start_time < b.start_time
+          ? -1
+          : 0;
+      });
+      console.log(defaultScheduleListRef.current);
     }
     setDayDefaultScheduleList(
       defaultScheduleListRef.current.filter(
@@ -181,8 +191,8 @@ const WorkoutContent: React.FC = () => {
         </WorkoutManage>
         <AddWorkoutsBtn
           location={selectedLocation + 1}
-          rerender={getDefaultScheduleList}
-          default={true}
+          workouts={dayDefaultScheduleList}
+          rerender={getDayScheduleList}
         >
           운동 배치하기
         </AddWorkoutsBtn>

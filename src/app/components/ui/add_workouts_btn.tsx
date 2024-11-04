@@ -1,13 +1,15 @@
 import {
-  dbInsertDefaultWorkoutSchedule,
-  dbInsertWorkoutSchedule,
+  dbInsertDefaultWorkout2DefaultWorkouts,
+  dbInsertWorkout2Workouts,
+  dbInsertDefaultWorkouts2Workouts,
 } from "@/app/api/supabase_api";
+import { Schedule } from "@/app/interfaces/interfaces";
 import React, { useState } from "react";
 
 export default function AddWorkoutsBtn(props: {
-  location: number | null;
+  location: number;
+  workouts: Array<Schedule>;
   rerender: () => void;
-  default: boolean;
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,25 +40,16 @@ export default function AddWorkoutsBtn(props: {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (props.default) {
-      const newData = {
-        ...formData,
-        location_id: props.location,
-      };
-      await dbInsertDefaultWorkoutSchedule(newData);
-    } else {
-      const newData = {
-        ...formData,
-        location_id: props.location,
-      };
-      console.log(newData, props.location);
-      await dbInsertWorkoutSchedule(newData);
-    }
+    const newData = {
+      ...formData,
+      location_id: props.location,
+    };
+    await dbInsertDefaultWorkouts2Workouts(newData, props.workouts);
     closeModal();
     props.rerender();
   }
 
-  if (props.location === null) {
+  if (props.location < 0) {
     return <></>;
   }
 

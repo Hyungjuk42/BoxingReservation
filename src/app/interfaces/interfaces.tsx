@@ -3,7 +3,6 @@ export interface Schedule {
   start_time: string;
   workout_name: string;
   location_id: number;
-  duration: number;
 }
 
 export interface Attendee {
