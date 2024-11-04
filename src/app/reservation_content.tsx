@@ -37,6 +37,7 @@ const ReservationContent: React.FC = () => {
     workout_name: "",
   });
 
+  const [dayScheduleList, setDayScheduleList] = useState<Array<Schedule>>([]);
   const [attendance, setAttendance] = useState<Array<Attendee>>([]);
 
   useEffect(() => {
@@ -45,6 +46,11 @@ const ReservationContent: React.FC = () => {
       if (res && !(res instanceof Error)) {
         scheduleListRef.current = res;
       }
+      setDayScheduleList(
+        scheduleListRef.current.filter(
+          (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
+        )
+      );
     })();
   }, [selectedDate]);
 
@@ -74,11 +80,6 @@ const ReservationContent: React.FC = () => {
       ...attendance.slice(index + 1),
     ]);
   };
-
-  const dayScheduleList = scheduleListRef.current.filter(
-    (schedule: Schedule) =>
-      (selectedLocation ?? -1) + 1 === schedule.location_id
-  );
 
   return (
     <div className="flex h-full">
