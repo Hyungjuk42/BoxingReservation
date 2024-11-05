@@ -7,6 +7,7 @@ export default function WorkoutManage(props: {
   scheduleList: Array<Schedule>;
   getTime: (str: string) => string | null;
   handleDeleteSchedule: (schedule: Schedule) => void;
+  height: string;
   children: React.ReactNode;
 }) {
   return (
@@ -14,7 +15,10 @@ export default function WorkoutManage(props: {
       <h2 className="text-xl font-bold mb-4">{props.title}</h2>
       <div className="flex flex-1 flex-col justify-between">
         {props.scheduleList.length > 0 ? (
-          <ul className="space-y-2">
+          <ul
+            style={{ height: props.height }}
+            className="space-y-2 overflow-y-scroll no-scrollbar"
+          >
             {props.scheduleList.map((schedule: Schedule, index: number) => (
               <li
                 key={index}

@@ -21,7 +21,7 @@ const Home: React.FC = () => {
   const { section } = useSectionContext();
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <TopNavBar />
       <div className="flex flex-1">
         <SideBar />

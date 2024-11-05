@@ -109,7 +109,10 @@ const WorkoutContent: React.FC = () => {
 
   return (
     <div className="flex h-full">
-      <div className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
+      <div
+        style={{ height: "calc(100vh - 6.5rem)" }}
+        className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200 overflow-y-scroll no-scrollbar"
+      >
         <ReactCalendar date={selectedDate} setDate={setSelectedDate} />
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
@@ -127,11 +130,15 @@ const WorkoutContent: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="flex flex-col w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
+      <div
+        style={{ height: "calc(100vh - 6.5rem)" }}
+        className="flex flex-col w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200"
+      >
         <WorkoutManage
           title="운동 스케줄"
           scheduleList={dayScheduleList}
           getTime={getTime2Date}
+          height="calc(100vh - 12rem)"
           handleDeleteSchedule={(schedule) => {
             dbDeleteWorkoutSchedule(schedule.id).then((res) => {
               if (res) {
@@ -158,11 +165,15 @@ const WorkoutContent: React.FC = () => {
           </AddWorkoutBtn>
         </WorkoutManage>
       </div>
-      <div className="flex flex-col w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
+      <div
+        style={{ height: "calc(100vh - 6.5rem)" }}
+        className="flex flex-col w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200"
+      >
         <WorkoutManage
           title="기본 시간대"
           scheduleList={dayDefaultScheduleList}
           getTime={getTime2Time}
+          height="calc(100vh - 15rem)"
           handleDeleteSchedule={(schedule: Schedule) => {
             dbDeleteDefaultSchedule(schedule.id).then((res) => {
               if (res) {
