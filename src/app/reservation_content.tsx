@@ -37,6 +37,7 @@ const ReservationContent: React.FC = () => {
     workout_name: "",
   });
 
+  const [dayScheduleList, setDayScheduleList] = useState<Array<Schedule>>([]);
   const [attendance, setAttendance] = useState<Array<Attendee>>([]);
 
   useEffect(() => {
@@ -45,6 +46,11 @@ const ReservationContent: React.FC = () => {
       if (res && !(res instanceof Error)) {
         scheduleListRef.current = res;
       }
+      setDayScheduleList(
+        scheduleListRef.current.filter(
+          (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
+        )
+      );
     })();
   }, [selectedDate]);
 
@@ -75,14 +81,12 @@ const ReservationContent: React.FC = () => {
     ]);
   };
 
-  const dayScheduleList = scheduleListRef.current.filter(
-    (schedule: Schedule) =>
-      (selectedLocation ?? -1) + 1 === schedule.location_id
-  );
-
   return (
     <div className="flex h-full">
-      <div className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
+      <div
+        style={{ height: "calc(100vh - 6.5rem)" }}
+        className="flex flex-col items-center w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200 overflow-y-scroll no-scrollbar"
+      >
         <ReactCalendar date={selectedDate} setDate={setSelectedDate} />
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
@@ -100,10 +104,16 @@ const ReservationContent: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200">
+      <div
+        style={{ height: "calc(100vh - 6.5rem)" }}
+        className="w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200"
+      >
         <h2 className="text-xl font-bold mb-4">운동 스케줄</h2>
         {scheduleListRef.current.length > 0 ? (
-          <ul className="space-y-2">
+          <ul
+            style={{ height: "calc(100vh - 9rem)" }}
+            className="space-y-2 overflow-y-scroll no-scrollbar"
+          >
             {dayScheduleList.map((schedule: Schedule, index: number) => (
               <li
                 key={index}
@@ -128,7 +138,10 @@ const ReservationContent: React.FC = () => {
       <div className="w-1/3 px-4 my-4">
         <h2 className="text-xl font-bold mb-4">출석 관리</h2>
         {selectedSchedule ? (
-          <ul className="space-y-2">
+          <ul
+            style={{ height: "calc(100vh - 9rem)" }}
+            className="space-y-2 overflow-y-scroll no-scrollbar"
+          >
             {attendance.map((attendee: Attendee, index: number) => (
               <li
                 key={index}

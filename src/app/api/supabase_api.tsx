@@ -145,7 +145,9 @@ const generateDateRange = (startDate: string, endDate: string): string[] => {
   const end = new Date(endDate);
 
   while (currentDate <= end) {
-    dates.push(currentDate.toISOString().split("T")[0]); // Format as yyyy-MM-dd
+    // if Weekend, skip
+    if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6)
+      dates.push(currentDate.toISOString().split("T")[0]); // Format as yyyy-MM-dd
     currentDate.setDate(currentDate.getDate() + 1);
   }
 

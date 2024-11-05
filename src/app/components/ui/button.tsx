@@ -6,7 +6,7 @@ export default function Button(props: {
   return (
     <button
       onClick={() => props.handleClick()}
-      className={`px-4 py-2
+      className={`px-4 py-2 max-w-64
       ${
         props.selected
           ? "bg-white border-primary-600 text-primary-700 hover:bg-primary-600 font-bold"

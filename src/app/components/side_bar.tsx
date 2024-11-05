@@ -36,7 +36,7 @@ const SideBarBtn: React.FC<SideBarBtnProps> = (props: SideBarBtnProps) => {
           }
           alt="Icon"
         />
-        <span>{props.text}</span>
+        <span className="hidden lg:block">{props.text}</span>
       </button>
     </li>
   );
@@ -59,15 +59,15 @@ const SideBar: React.FC = () => {
       text: "유저 관리",
       iconSrc: "user2",
     },
-    {
-      section: "setting",
-      text: "설정",
-      iconSrc: "setting",
-    },
+    // {
+    //   section: "setting",
+    //   text: "설정",
+    //   iconSrc: "setting",
+    // },
   ];
 
   return (
-    <aside className="w-64 bg-primary-100 p-4">
+    <aside className="w-16 lg:w-64 bg-primary-100 lg:p-4">
       <nav>
         <ul className="space-y-2">
           {sideBarInfo.map((info) => (

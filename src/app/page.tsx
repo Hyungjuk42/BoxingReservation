@@ -53,7 +53,7 @@ const MainPage: React.FC = () => {
   return isLogin ? (
     <Home />
   ) : (
-    <div className="h-screen w-full max-w-md mx-auto space-y-6 flex flex-col justify-center bg-white">
+    <div className="h-screen w-full max-w-md mx-auto space-y-6 flex flex-col justify-center bg-white overflow-hidden">
       <div className="flex justify-center">
         <Image src="/logo/logo.jpg" alt="main logo" width={400} height={200} />
       </div>

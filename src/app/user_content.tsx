@@ -33,7 +33,10 @@ const UserContent = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <ul className="space-y-2">
+      <ul
+        style={{ height: "calc(100vh - 12rem)" }}
+        className="space-y-2 overflow-y-scroll no-scrollbar"
+      >
         {filteredUsers.map((user) => (
           <li
             key={user.id}
