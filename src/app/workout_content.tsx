@@ -5,7 +5,9 @@ import {
   dbGetScheduleList,
   dbDeleteWorkoutSchedule,
   dbDeleteDefaultSchedule,
+  dbDeleteDefaultWorkoutName,
   dbGetDefaultScheduleList,
+  dbGetDefaultWorkoutName,
 } from "@/app/api/supabase_api";
 
 import { Schedule } from "@/app/interfaces/interfaces";
@@ -25,6 +27,7 @@ const getTime2Date = (dateString: string): string | null => {
 };
 
 const getTime2Time = (timeString: string): string | null => {
+  if (!timeString) return null;
   const match = timeString.match(/^(\d{1,2}:\d{2})/);
   return match ? match[1] : null;
 };
@@ -65,6 +68,10 @@ const WorkoutContent: React.FC = () => {
     Array<Schedule>
   >([]);
 
+  const [defaultScheduleListName, setDefaultScheduleListName] = useState<
+    Array<Schedule>
+  >([]);
+
   const getDefaultScheduleList = async () => {
     const res = await dbGetDefaultScheduleList();
     if (res && !(res instanceof Error)) {
@@ -85,8 +92,17 @@ const WorkoutContent: React.FC = () => {
     );
   };
 
+  const getDefaultScheduleListName = async () => {
+    const res = await dbGetDefaultWorkoutName();
+    console.log(res);
+    if (res && !(res instanceof Error)) {
+      setDefaultScheduleListName(res);
+    }
+  };
+
   useEffect(() => {
     getDefaultScheduleList();
+    getDefaultScheduleListName();
   }, []);
 
   useEffect(() => {
@@ -159,7 +175,7 @@ const WorkoutContent: React.FC = () => {
             date={selectedDate}
             location={selectedLocation + 1}
             rerender={getDayScheduleList}
-            default={false}
+            default={3}
           >
             운동 추가
           </AddWorkoutBtn>
@@ -170,10 +186,10 @@ const WorkoutContent: React.FC = () => {
         className="flex flex-col w-1/3 px-4 my-4 border-r-2 border-solid border-gray-200"
       >
         <WorkoutManage
-          title="기본 시간대"
+          title="기본 운동 시간"
           scheduleList={dayDefaultScheduleList}
           getTime={getTime2Time}
-          height="calc(100vh - 15rem)"
+          height="calc(50vh - 10rem)"
           handleDeleteSchedule={(schedule: Schedule) => {
             dbDeleteDefaultSchedule(schedule.id).then((res) => {
               if (res) {
@@ -195,14 +211,42 @@ const WorkoutContent: React.FC = () => {
             date={selectedDate}
             location={selectedLocation + 1}
             rerender={getDefaultScheduleList}
-            default={true}
+            default={2}
           >
-            운동 추가
+            운동 시간 추가
+          </AddWorkoutBtn>
+        </WorkoutManage>
+        <WorkoutManage
+          title="기본 운동 이름"
+          scheduleList={defaultScheduleListName}
+          getTime={getTime2Time}
+          height="calc(50vh - 10rem)"
+          handleDeleteSchedule={(schedule: Schedule) => {
+            dbDeleteDefaultWorkoutName(schedule.id).then((res) => {
+              if (res) {
+                setDefaultScheduleListName(
+                  defaultScheduleListName.filter(
+                    (defaultSchedule: Schedule) =>
+                      defaultSchedule.id !== schedule.id
+                  )
+                );
+              }
+            });
+          }}
+        >
+          <AddWorkoutBtn
+            date={selectedDate}
+            location={selectedLocation + 1}
+            rerender={getDefaultScheduleListName}
+            default={1}
+          >
+            운동 이름 추가
           </AddWorkoutBtn>
         </WorkoutManage>
         <AddWorkoutsBtn
           location={selectedLocation + 1}
           workouts={dayDefaultScheduleList}
+          workoutName={defaultScheduleListName}
           rerender={getDayScheduleList}
         >
           운동 배치하기

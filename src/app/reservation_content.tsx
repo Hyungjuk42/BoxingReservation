@@ -124,10 +124,10 @@ const ReservationContent: React.FC = () => {
                 }`}
                 onClick={() => handleSelectSchedule(schedule)}
               >
-                <p className="font-semibold">
+                <p className="py-1 text-xl font-semibold">
                   {getTime2Date(new Date(schedule.start_time))}
                 </p>
-                <p>{schedule.workout_name}</p>
+                <p className="text-lg">{schedule.workout_name}</p>
               </li>
             ))}
           </ul>
