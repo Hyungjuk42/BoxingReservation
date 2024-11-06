@@ -54,6 +54,14 @@ const ReservationContent: React.FC = () => {
     })();
   }, [selectedDate]);
 
+  useEffect(() => {
+    setDayScheduleList(
+      scheduleListRef.current.filter(
+        (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
+      )
+    );
+  }, [selectedLocation]);
+
   const handleSelectSchedule = (selectedSchedule: Schedule) => {
     setSelectedSchedule(selectedSchedule);
     if (scheduleListRef.current.length > 0) {
