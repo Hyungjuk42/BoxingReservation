@@ -1,5 +1,6 @@
 import {
   dbInsertDefaultWorkout2DefaultWorkouts,
+  dbInsertDefaultWorkoutName2DefaultWorkoutName,
   dbInsertWorkout2Workouts,
 } from "@/app/api/supabase_api";
 import React, { useState } from "react";
@@ -8,30 +9,31 @@ export default function AddWorkoutBtn(props: {
   date: Date;
   location: number | null;
   rerender: () => void;
-  default: boolean;
+  default: number;
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    workout_name: "",
-    start_time: "",
-    location_id: "",
-  });
+  const [formData, setFormData] = useState({});
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const formList = [
-    {
+
+  const formList = [];
+
+  if (props.default & 1) {
+    formList.push({
       id: "workout_name",
       type: "text",
       placeholder: "운동 이름",
-    },
-    {
+    });
+  }
+  if (props.default & 2) {
+    formList.push({
       id: "start_time",
       type: "time",
       placeholder: "시작 시간",
-    },
-  ];
+    });
+  }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -40,13 +42,16 @@ export default function AddWorkoutBtn(props: {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (props.default) {
+    if (props.default === 2) {
       const newData = {
         ...formData,
         location_id: props.location,
       };
       await dbInsertDefaultWorkout2DefaultWorkouts(newData);
-    } else {
+    } else if (props.default === 1) {
+      console.log(formData);
+      await dbInsertDefaultWorkoutName2DefaultWorkoutName(formData);
+    } else if (props.default === 3) {
       const workout_date = props.date.toLocaleDateString("en-CA");
       const start_time = `${workout_date}T${formData.start_time}`;
       const newData = {

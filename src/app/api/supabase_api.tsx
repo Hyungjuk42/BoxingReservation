@@ -21,6 +21,14 @@ export const dbGetDefaultScheduleList = async () => {
   return data;
 };
 
+export const dbGetDefaultWorkoutName = async () => {
+  const { data, error } = await supabase.from("default_workout_name").select();
+  if (error) {
+    return error;
+  }
+  return data;
+};
+
 export const dbGetAttendanceList = async (id: string) => {
   const { data: reservationsData, error } = await supabase
     .from("reservations")
@@ -104,7 +112,17 @@ export const dbDeleteDefaultSchedule = async (id: string) => {
     .delete()
     .eq("id", id);
   if (error) {
-    console.log(data);
+    return false;
+  }
+  return true;
+};
+
+export const dbDeleteDefaultWorkoutName = async (id: string) => {
+  const { data, error } = await supabase
+    .from("default_workout_name")
+    .delete()
+    .eq("id", id);
+  if (error) {
     return false;
   }
   return true;
@@ -112,6 +130,7 @@ export const dbDeleteDefaultSchedule = async (id: string) => {
 
 export const dbDeleteUser = async (id: string) => {
   const { data, error } = await supabase.from("profiles").delete().eq("id", id);
+  console.log(data);
   if (error) {
     console.log(data);
     return false;
@@ -132,6 +151,18 @@ export const dbInsertDefaultWorkout2DefaultWorkouts = async (
 ) => {
   const { data, error } = await supabase
     .from("default_workouts")
+    .insert([newData]);
+  if (error) {
+    return error;
+  }
+  return data;
+};
+
+export const dbInsertDefaultWorkoutName2DefaultWorkoutName = async (
+  newData: object
+) => {
+  const { data, error } = await supabase
+    .from("default_workout_name")
     .insert([newData]);
   if (error) {
     return error;
@@ -160,7 +191,8 @@ export const dbInsertDefaultWorkouts2Workouts = async (
     end_date: string;
     location_id: number;
   },
-  workouts: Array<Schedule>
+  workouts: Array<Schedule>,
+  workoutName: Array<Schedule>
 ) => {
   const dateRange = generateDateRange(newData.start_date, newData.end_date);
   const workoutList = [];
@@ -168,21 +200,27 @@ export const dbInsertDefaultWorkouts2Workouts = async (
     .from("workouts")
     .select("workout_date")
     .lte("workout_date", newData.end_date)
-    .gte("workout_date", newData.start_date);
+    .gte("workout_date", newData.start_date)
+    .eq("location_id", newData.location_id);
 
   const dayWorkouts: { [key: string]: boolean } = {};
+  const rotateNum = workoutName?.length;
   if (dateData) {
     for (const item of dateData) {
       dayWorkouts[item.workout_date as string] = true;
     }
   }
+  let i: number = -1;
   for (const date of dateRange) {
     if (dayWorkouts[date]) {
       continue;
     }
     for (const workout of workouts) {
+      i++;
+      if (i % rotateNum === 0) i = 0;
       const newWorkout = {
         ...workout,
+        workout_name: workoutName[i].workout_name,
         workout_date: date,
         start_time: `${date}T${workout.start_time}`,
         location_id: newData.location_id,

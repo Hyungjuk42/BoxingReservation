@@ -22,13 +22,15 @@ export default function WorkoutManage(props: {
             {props.scheduleList.map((schedule: Schedule, index: number) => (
               <li
                 key={index}
-                className={`p-2 border border-solid rounded border-gray-300`}
+                className={`p-2 border border-solid rounded border-gray-300 flex justify-between items-center`}
               >
-                <p className="font-semibold">
-                  {props.getTime(schedule.start_time)}
-                </p>
+                <div>
+                  <p className="text-xl font-semibold py-1">
+                    {props.getTime(schedule.start_time)}
+                  </p>
+                  <p className="text-lg">{schedule.workout_name}</p>
+                </div>
                 <div className="flex justify-between items-center">
-                  <p>{schedule.workout_name}</p>
                   <Image
                     className="w-6 h-6 p-1 cursor-pointer"
                     onClick={() => props.handleDeleteSchedule(schedule)}

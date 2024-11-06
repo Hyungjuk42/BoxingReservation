@@ -9,6 +9,7 @@ import React, { useState } from "react";
 export default function AddWorkoutsBtn(props: {
   location: number;
   workouts: Array<Schedule>;
+  workoutName: Array<Schedule>;
   rerender: () => void;
   children: React.ReactNode;
 }) {
@@ -44,7 +45,11 @@ export default function AddWorkoutsBtn(props: {
       ...formData,
       location_id: props.location,
     };
-    await dbInsertDefaultWorkouts2Workouts(newData, props.workouts);
+    await dbInsertDefaultWorkouts2Workouts(
+      newData,
+      props.workouts,
+      props.workoutName
+    );
     closeModal();
     props.rerender();
   }
