@@ -39,6 +39,8 @@ export const dbGetAttendanceList = async (id: string) => {
     return [];
   }
 
+  console.log(id, reservationsData);
+
   const listData = await Promise.all(
     reservationsData.map(async (item) => {
       const { data: userData } = await supabase
@@ -85,6 +87,21 @@ export const dbGetOneDayWorkout2Workouts = async (date: string) => {
     return error;
   }
   return data;
+};
+
+export const dbUpdateReservationsAttendance = async (
+  id: string,
+  attendance: boolean
+) => {
+  const { data, error } = await supabase
+    .from("reservations")
+    .update({ attendance: attendance })
+    .eq("id", id);
+  console.log(id, attendance, data);
+  if (error) {
+    return false;
+  }
+  return true;
 };
 
 export const dbDeleteWorkoutSchedule = async (id: string) => {

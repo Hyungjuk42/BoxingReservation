@@ -1,7 +1,11 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
-import { dbGetScheduleList, dbGetAttendanceList } from "@/app/api/supabase_api";
+import {
+  dbGetScheduleList,
+  dbGetAttendanceList,
+  dbUpdateReservationsAttendance,
+} from "@/app/api/supabase_api";
 
 import Button from "@/app/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
@@ -51,6 +55,7 @@ const ReservationContent: React.FC = () => {
           (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
         )
       );
+      setAttendance([]);
     })();
   }, [selectedDate]);
 
@@ -60,12 +65,32 @@ const ReservationContent: React.FC = () => {
         (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
       )
     );
+    setAttendance([]);
   }, [selectedLocation]);
+
+  useEffect(() => {
+    setSelectedSchedule(
+      dayScheduleList[0] ?? {
+        id: "",
+        location_id: 0,
+        start_time: "",
+        workout_name: "",
+      }
+    );
+    if (dayScheduleList.length > 0) {
+      (async () => {
+        const idList = await dbGetAttendanceList(dayScheduleList[0].id);
+        setAttendance(idList);
+      })();
+    } else {
+      setAttendance([]);
+    }
+  }, [dayScheduleList]);
 
   const handleSelectSchedule = (selectedSchedule: Schedule) => {
     setSelectedSchedule(selectedSchedule);
-    if (scheduleListRef.current.length > 0) {
-      const schedule = scheduleListRef.current.find(
+    if (dayScheduleList.length > 0) {
+      const schedule = dayScheduleList.find(
         (schedule: Schedule) =>
           schedule.start_time === selectedSchedule.start_time
       );
@@ -79,9 +104,8 @@ const ReservationContent: React.FC = () => {
   };
 
   const toggleAttendance = (attendee: Attendee, index: number) => {
-    console.log(attendee.attendance);
     const item = { ...attendee, attendance: !attendee.attendance };
-    console.log(item);
+    dbUpdateReservationsAttendance(item.id, item.attendance);
     setAttendance([
       ...attendance.slice(0, index),
       item,
