@@ -1,4 +1,4 @@
-export default function Button(props: {
+export default function ButtonLoc(props: {
   selected: boolean;
   handleClick: () => void;
   children: React.ReactNode;

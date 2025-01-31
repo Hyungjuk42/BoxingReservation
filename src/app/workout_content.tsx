@@ -12,7 +12,7 @@ import {
 
 import { Schedule } from "@/app/interfaces/interfaces";
 
-import Button from "@/app/components/ui/button";
+import ButtonLoc from "@/app/components/ui/button_location";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
@@ -133,13 +133,13 @@ const WorkoutContent: React.FC = () => {
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
-              <Button
+              <ButtonLoc
                 key={location}
                 handleClick={() => setSelectedLocation(idx)}
                 selected={locations[selectedLocation] === location}
               >
                 {location}
-              </Button>
+              </ButtonLoc>
             ))
           ) : (
             <h3 className="">추가된 도장 없음</h3>

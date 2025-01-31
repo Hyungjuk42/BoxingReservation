@@ -52,7 +52,7 @@ export default function AddWorkoutBtn(props: {
       console.log(formData);
       await dbInsertDefaultWorkoutName2DefaultWorkoutName(formData);
     } else if (props.default === 3) {
-      const workout_date = props.date.toLocaleDateString("en-CA");
+      const workout_date = props.date.toLocaleDateString("ko-KR");
       const start_time = `${workout_date}T${formData.start_time}`;
       const newData = {
         ...formData,
