@@ -12,7 +12,8 @@ import {
 
 import { Schedule } from "@/app/interfaces/interfaces";
 
-import ButtonLoc from "@/app/components/ui/button_location";
+import { getDateForm2Date } from "./reservation_content";
+import Button from "@/app/components/ui/button_location";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
@@ -30,10 +31,6 @@ const getTime2Time = (timeString: string): string | null => {
   if (!timeString) return null;
   const match = timeString.match(/^(\d{1,2}:\d{2})/);
   return match ? match[1] : null;
-};
-
-const getDateForm2Date = (date: Date) => {
-  return date.toLocaleDateString("en-CA");
 };
 
 const WorkoutContent: React.FC = () => {
@@ -133,13 +130,13 @@ const WorkoutContent: React.FC = () => {
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
-              <ButtonLoc
+              <Button
                 key={location}
                 handleClick={() => setSelectedLocation(idx)}
                 selected={locations[selectedLocation] === location}
               >
                 {location}
-              </ButtonLoc>
+              </Button>
             ))
           ) : (
             <h3 className="">추가된 도장 없음</h3>
