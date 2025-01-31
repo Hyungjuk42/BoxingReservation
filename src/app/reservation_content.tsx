@@ -1,6 +1,9 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+
 import {
   dbGetScheduleList,
   dbGetAttendanceList,
@@ -47,8 +50,8 @@ const getTime2Date = (date: Date) => {
   return `${hours}:${minutes}`;
 };
 
-const getDateForm2Date = (date: Date) => {
-  return date.toLocaleDateString("en-CA");
+export const getDateForm2Date = (date: Date) => {
+  return format(date, "yyyy-MM-dd", { locale: ko });
 };
 
 const ReservationContent: React.FC = () => {

@@ -5,6 +5,8 @@ import {
 } from "@/app/api/supabase_api";
 import React, { useState } from "react";
 
+import { getDateForm2Date } from "@/app/reservation_content";
+
 export default function AddWorkoutBtn(props: {
   date: Date;
   location: number | null;
@@ -52,7 +54,7 @@ export default function AddWorkoutBtn(props: {
       console.log(formData);
       await dbInsertDefaultWorkoutName2DefaultWorkoutName(formData);
     } else if (props.default === 3) {
-      const workout_date = props.date.toLocaleDateString("ko-KR");
+      const workout_date = getDateForm2Date(props.date);
       const start_time = `${workout_date}T${formData.start_time}`;
       const newData = {
         ...formData,
