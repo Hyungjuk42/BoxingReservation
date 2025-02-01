@@ -14,7 +14,6 @@ import {
 
 import ButtonLoc from "@/app/components/ui/button_location";
 import { Button } from "@/components/ui/button";
-import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 
 import { Attendee, Schedule } from "@/app/interfaces/interfaces";
@@ -86,7 +85,7 @@ const ReservationContent: React.FC = () => {
       );
       setAttendance([]);
     })();
-  }, [selectedDate]);
+  }, [selectedDate, selectedLocation]);
 
   useEffect(() => {
     setDayScheduleList(

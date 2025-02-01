@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useState, useEffect, useRef } from "react";
 
 import {
@@ -46,7 +46,7 @@ const WorkoutContent: React.FC = () => {
 
   const [dayScheduleList, setDayScheduleList] = useState<Array<Schedule>>([]);
 
-  const getDayScheduleList = async () => {
+  const getDayScheduleList = useCallback(async () => {
     const res = await dbGetScheduleList(getDateForm2Date(selectedDate));
     if (res && !(res instanceof Error)) {
       scheduleListRef.current = res.sort((a, b) => {
@@ -60,7 +60,7 @@ const WorkoutContent: React.FC = () => {
         (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
       )
     );
-  };
+  }, [selectedDate, selectedLocation]);
 
   const [dayDefaultScheduleList, setDayDefaultScheduleList] = useState<
     Array<Schedule>
@@ -70,7 +70,7 @@ const WorkoutContent: React.FC = () => {
     Array<Schedule>
   >([]);
 
-  const getDefaultScheduleList = async () => {
+  const getDefaultScheduleList = useCallback(async () => {
     const res = await dbGetDefaultScheduleList();
     if (res && !(res instanceof Error)) {
       defaultScheduleListRef.current = res.sort((a, b) => {
@@ -87,14 +87,14 @@ const WorkoutContent: React.FC = () => {
           (selectedLocation ?? -1) + 1 === schedule.location_id
       )
     );
-  };
+  }, [selectedLocation]);
 
-  const getDefaultScheduleListName = async () => {
+  const getDefaultScheduleListName = useCallback(async () => {
     const res = await dbGetDefaultWorkoutName();
     if (res && !(res instanceof Error)) {
       setDefaultScheduleListName(res);
     }
-  };
+  }, []);
 
   const deleteWorkoutsNReservationsBeforeMonths = async (months: number) => {
     const date = new Date();
@@ -112,11 +112,11 @@ const WorkoutContent: React.FC = () => {
     getDefaultScheduleListName();
     // Delete old data before 12 months
     deleteWorkoutsNReservationsBeforeMonths(12);
-  }, []);
+  }, [getDefaultScheduleList, getDefaultScheduleListName]);
 
   useEffect(() => {
     getDayScheduleList();
-  }, [selectedDate]);
+  }, [selectedDate, getDayScheduleList]);
 
   useEffect(() => {
     setDayScheduleList(

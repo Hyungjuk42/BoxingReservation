@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import { useAuth } from "@/app/api/login";
-import { sign } from "crypto";
 
 export default function TopNavBar() {
   const { signOut } = useAuth();

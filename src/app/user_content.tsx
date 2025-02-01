@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { dbDeleteUser, dbGetUserList } from "./api/supabase_api";
 import { User } from "@/app/interfaces/interfaces";
 
-import DeleteButtonSm from "@/app/components/ui/delete_button_sm";
 import { Button } from "@/components/ui/button";
 
 const UserContent = () => {
