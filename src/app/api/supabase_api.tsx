@@ -200,7 +200,7 @@ export const dbDeleteOldDates = async (
   const { data, error } = await supabase
     .from(tableName)
     .delete()
-    .lt(dateColumn, targetDate); // targetDate 이전의 데이터 삭제
+    .lt(dateColumn, targetDate);
 
   if (error) {
     console.error("Error deleting data:", error);
