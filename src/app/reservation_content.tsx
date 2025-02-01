@@ -1,13 +1,19 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+
 import {
   dbGetScheduleList,
   dbGetAttendanceList,
   dbUpdateReservationsAttendance,
+  dbUpdateReservationsFirstDate,
+  dbUpdateReservationsRegistration,
 } from "@/app/api/supabase_api";
 
-import Button from "@/app/components/ui/button";
+import ButtonLoc from "@/app/components/ui/button_location";
+import { Button } from "@/components/ui/button";
 import ButtonSm from "@/app/components/ui/button_sm";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 
@@ -15,14 +21,37 @@ import { Attendee, Schedule } from "@/app/interfaces/interfaces";
 
 import { locations } from "@/app/constants/data";
 
+const getSortedAttendanceList = async (id: string) => {
+  const idList = await dbGetAttendanceList(id);
+  const newIdList = idList.sort((a, b) => {
+    return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
+  });
+  return newIdList;
+};
+
+const getExpireDate = (date: Date) => {
+  const expireDate = new Date(date);
+  expireDate.setDate(expireDate.getDate() + 6);
+  return expireDate;
+};
+
+const isExpiredDate = (date: Date | null) => {
+  if (date === null) return false;
+  const expireDate = getExpireDate(date);
+  const today = new Date();
+  const expireDateStr = `${expireDate.getFullYear()}-${expireDate.getMonth()}-${expireDate.getDate()}`;
+  const todayStr = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  return expireDateStr < todayStr;
+};
+
 const getTime2Date = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 };
 
-const getDateForm2Date = (date: Date) => {
-  return date.toLocaleDateString("en-CA");
+export const getDateForm2Date = (date: Date) => {
+  return format(date, "yyyy-MM-dd", { locale: ko });
 };
 
 const ReservationContent: React.FC = () => {
@@ -79,7 +108,7 @@ const ReservationContent: React.FC = () => {
     );
     if (dayScheduleList.length > 0) {
       (async () => {
-        const idList = await dbGetAttendanceList(dayScheduleList[0].id);
+        const idList = await getSortedAttendanceList(dayScheduleList[0].id);
         setAttendance(idList);
       })();
     } else {
@@ -96,7 +125,7 @@ const ReservationContent: React.FC = () => {
       );
       if (schedule) {
         (async () => {
-          const idList = await dbGetAttendanceList(schedule.id);
+          const idList = await getSortedAttendanceList(schedule.id);
           setAttendance(idList);
         })();
       }
@@ -104,8 +133,27 @@ const ReservationContent: React.FC = () => {
   };
 
   const toggleAttendance = (attendee: Attendee, index: number) => {
-    const item = { ...attendee, attendance: !attendee.attendance };
+    let item = { ...attendee, attendance: !attendee.attendance };
     dbUpdateReservationsAttendance(item.id, item.attendance);
+    if (item.first_date === null) {
+      const first_date = new Date();
+      item = { ...item, first_date: first_date };
+      dbUpdateReservationsFirstDate(item.user_id, getDateForm2Date(first_date));
+    }
+    setAttendance([
+      ...attendance.slice(0, index),
+      item,
+      ...attendance.slice(index + 1),
+    ]);
+  };
+
+  const toggleRegistration = (attendee: Attendee, index: number) => {
+    const res = confirm(
+      `정말 ${attendee.registration ? "체험" : "정기"}권으로 변경하시겠습니까?`
+    );
+    if (res == false) return;
+    const item = { ...attendee, registration: !attendee.registration };
+    dbUpdateReservationsRegistration(item.user_id, item.registration);
     setAttendance([
       ...attendance.slice(0, index),
       item,
@@ -123,13 +171,13 @@ const ReservationContent: React.FC = () => {
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
-              <Button
+              <ButtonLoc
                 key={location}
                 handleClick={() => setSelectedLocation(idx)}
                 selected={locations[selectedLocation] === location}
               >
                 {location}
-              </Button>
+              </ButtonLoc>
             ))
           ) : (
             <h3 className="">추가된 도장 없음</h3>
@@ -177,15 +225,64 @@ const ReservationContent: React.FC = () => {
             {attendance.map((attendee: Attendee, index: number) => (
               <li
                 key={index}
-                className="flex justify-between items-center p-2 border-b border-solid border-gray-200"
+                style={{ marginTop: "0" }}
+                className="flex justify-between items-center p-2 pt-0 m-0 border-b border-solid border-gray-200"
               >
-                <span>{attendee.name}</span>
-                <ButtonSm
-                  handleClick={() => toggleAttendance(attendee, index)}
-                  clicked={attendee.attendance}
-                >
-                  {attendee.attendance ? "출석 완료" : "출석"}
-                </ButtonSm>
+                <div className="flex pt-2 items-center">
+                  <span className="w-12">{attendee.name}</span>
+                  <span
+                    className={`text-sm ${
+                      attendee.registration
+                        ? "text-primary-800 font-semibold"
+                        : "text-gray-800"
+                    } pl-4`}
+                  >
+                    {attendee.registration ? (
+                      "정기권"
+                    ) : attendee.first_date ? (
+                      <>
+                        {`${getDateForm2Date(
+                          getExpireDate(attendee.first_date)
+                        )}`}
+                        <span
+                          className={`text-red-500 font-semibold ${
+                            isExpiredDate(attendee.first_date) ? "" : "hidden"
+                          }`}
+                        >
+                          (만료)
+                        </span>
+                      </>
+                    ) : (
+                      "시작 안함"
+                    )}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <Button
+                    variant="link"
+                    size={"sm"}
+                    className={`${
+                      attendee.registration
+                        ? "text-primary-800 font-semibold"
+                        : "text-gray-500"
+                    } w-16`}
+                    onClick={() => toggleRegistration(attendee, index)}
+                  >
+                    {attendee.registration ? "정기" : "체험"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size={"sm"}
+                    onClick={() => toggleAttendance(attendee, index)}
+                    className={`${
+                      attendee.attendance
+                        ? "border-primary-500"
+                        : "border-gray-500"
+                    } w-16`}
+                  >
+                    {attendee.attendance ? "출석 완" : "미출석"}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

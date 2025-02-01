@@ -10,6 +10,8 @@ export interface Attendee {
   user_id: string;
   name: string;
   attendance: boolean;
+  first_date: Date | null;
+  registration: boolean;
 }
 
 export interface User {

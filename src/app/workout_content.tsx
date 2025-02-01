@@ -8,11 +8,13 @@ import {
   dbDeleteDefaultWorkoutName,
   dbGetDefaultScheduleList,
   dbGetDefaultWorkoutName,
+  dbDeleteOldDates,
 } from "@/app/api/supabase_api";
 
 import { Schedule } from "@/app/interfaces/interfaces";
 
-import Button from "@/app/components/ui/button";
+import { getDateForm2Date } from "./reservation_content";
+import Button from "@/app/components/ui/button_location";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
@@ -30,10 +32,6 @@ const getTime2Time = (timeString: string): string | null => {
   if (!timeString) return null;
   const match = timeString.match(/^(\d{1,2}:\d{2})/);
   return match ? match[1] : null;
-};
-
-const getDateForm2Date = (date: Date) => {
-  return date.toLocaleDateString("en-CA");
 };
 
 const WorkoutContent: React.FC = () => {
@@ -82,7 +80,6 @@ const WorkoutContent: React.FC = () => {
           ? -1
           : 0;
       });
-      console.log(defaultScheduleListRef.current);
     }
     setDayDefaultScheduleList(
       defaultScheduleListRef.current.filter(
@@ -94,15 +91,27 @@ const WorkoutContent: React.FC = () => {
 
   const getDefaultScheduleListName = async () => {
     const res = await dbGetDefaultWorkoutName();
-    console.log(res);
     if (res && !(res instanceof Error)) {
       setDefaultScheduleListName(res);
     }
   };
 
+  const deleteWorkoutsNReservationsBeforeMonths = async (months: number) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - months);
+    await dbDeleteOldDates(
+      "reservations",
+      "reserved_at",
+      getDateForm2Date(date)
+    );
+    await dbDeleteOldDates("workouts", "workout_date", getDateForm2Date(date));
+  };
+
   useEffect(() => {
     getDefaultScheduleList();
     getDefaultScheduleListName();
+    // Delete old data before 12 months
+    deleteWorkoutsNReservationsBeforeMonths(12);
   }, []);
 
   useEffect(() => {

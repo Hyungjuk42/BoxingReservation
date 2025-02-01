@@ -4,6 +4,7 @@ import { dbDeleteUser, dbGetUserList } from "./api/supabase_api";
 import { User } from "@/app/interfaces/interfaces";
 
 import DeleteButtonSm from "@/app/components/ui/delete_button_sm";
+import { Button } from "@/components/ui/button";
 
 const UserContent = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,8 +48,10 @@ const UserContent = () => {
               <p>email: {user.email}</p>
               <p>전화번호: {user.phone}</p>
             </div>
-            <DeleteButtonSm
-              handleClick={() => {
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
                 dbDeleteUser(user.id).then((res) => {
                   if (res) {
                     setUsers(users.filter((item) => item.id !== user.id));
@@ -57,10 +60,7 @@ const UserContent = () => {
               }}
             >
               계정 삭제
-            </DeleteButtonSm>
-            {/* <Button variant="destructive" onClick={() => deleteUser(user.id)}>
-              계정 삭제
-            </Button> */}
+            </Button>
           </li>
         ))}
       </ul>

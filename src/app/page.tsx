@@ -14,7 +14,6 @@ const MainPage: React.FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    console.log("User: ", user);
     if (!user) {
       setIsLogin(false);
     } else {
