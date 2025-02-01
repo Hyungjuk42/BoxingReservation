@@ -15,7 +15,10 @@ export default function AddWorkoutBtn(props: {
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    workout_name: "",
+    start_time: "",
+  });
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
