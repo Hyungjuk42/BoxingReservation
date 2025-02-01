@@ -138,10 +138,7 @@ const ReservationContent: React.FC = () => {
     if (item.first_date === null) {
       const first_date = new Date();
       item = { ...item, first_date: first_date };
-      dbUpdateReservationsFirstDate(
-        item.user_id,
-        first_date.toLocaleDateString("ko-KR")
-      );
+      dbUpdateReservationsFirstDate(item.user_id, getDateForm2Date(first_date));
     }
     setAttendance([
       ...attendance.slice(0, index),
@@ -231,8 +228,8 @@ const ReservationContent: React.FC = () => {
                 style={{ marginTop: "0" }}
                 className="flex justify-between items-center p-2 pt-0 m-0 border-b border-solid border-gray-200"
               >
-                <div className="pt-2">
-                  <span>{attendee.name}</span>
+                <div className="flex pt-2 items-center">
+                  <span className="w-12">{attendee.name}</span>
                   <span
                     className={`text-sm ${
                       attendee.registration
@@ -244,13 +241,9 @@ const ReservationContent: React.FC = () => {
                       "정기권"
                     ) : attendee.first_date ? (
                       <>
-                        {`${getExpireDate(
-                          attendee.first_date
-                        ).toLocaleDateString("ko-KR", {
-                          year: "2-digit",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}`}
+                        {`${getDateForm2Date(
+                          getExpireDate(attendee.first_date)
+                        )}`}
                         <span
                           className={`text-red-500 font-semibold ${
                             isExpiredDate(attendee.first_date) ? "" : "hidden"

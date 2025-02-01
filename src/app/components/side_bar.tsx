@@ -67,7 +67,7 @@ const SideBar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-16 lg:w-64 bg-primary-100 lg:p-4">
+    <aside className="w-16 xl:w-64 lg:w-40 bg-primary-100 xl:p-4 lg:p-2">
       <nav>
         <ul className="space-y-2">
           {sideBarInfo.map((info) => (
