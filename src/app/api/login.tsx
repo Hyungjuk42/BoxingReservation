@@ -1,17 +1,18 @@
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import supabase from "@/utils/supabase";
+import { User } from "@supabase/auth-js";
 
 interface AuthContextType {
-  user: any;
-  setUser: React.Dispatch<React.SetStateAction<any>>;
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = (props: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const checkSession = async () => {

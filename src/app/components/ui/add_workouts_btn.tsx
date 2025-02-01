@@ -1,8 +1,4 @@
-import {
-  dbInsertDefaultWorkout2DefaultWorkouts,
-  dbInsertWorkout2Workouts,
-  dbInsertDefaultWorkouts2Workouts,
-} from "@/app/api/supabase_api";
+import { dbInsertDefaultWorkouts2Workouts } from "@/app/api/supabase_api";
 import { Schedule } from "@/app/interfaces/interfaces";
 import React, { useState } from "react";
 

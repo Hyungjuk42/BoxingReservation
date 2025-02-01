@@ -30,10 +30,7 @@ export const dbGetDefaultWorkoutName = async () => {
 };
 
 export const dbDeleteReservation = async (id: string) => {
-  const { data, error } = await supabase
-    .from("reservations")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("reservations").delete().eq("id", id);
   if (error) {
     return false;
   }
@@ -108,7 +105,7 @@ export const dbUpdateReservationsAttendance = async (
   id: string,
   attendance: boolean
 ) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("reservations")
     .update({ attendance: attendance })
     .eq("id", id);
@@ -122,7 +119,7 @@ export const dbUpdateReservationsFirstDate = async (
   user_id: string,
   first_check_in_date: string
 ) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("profiles")
     .update({ first_check_in_date: first_check_in_date })
     .eq("id", user_id);
@@ -136,7 +133,7 @@ export const dbUpdateReservationsRegistration = async (
   user_id: string,
   registration: boolean
 ) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("profiles")
     .update({ registration: registration })
     .eq("id", user_id);
@@ -147,12 +144,12 @@ export const dbUpdateReservationsRegistration = async (
 };
 
 export const dbDeleteWorkoutSchedule = async (id: string) => {
-  const { data, error } = await supabase.from("workouts").delete().eq("id", id);
+  const { error } = await supabase.from("workouts").delete().eq("id", id);
   if (error) {
     return false;
   }
 
-  const { data: reservationsData, error: reservationsError } = await supabase
+  const { error: reservationsError } = await supabase
     .from("reservations")
     .delete()
     .eq("workout_id", id);
@@ -163,7 +160,7 @@ export const dbDeleteWorkoutSchedule = async (id: string) => {
 };
 
 export const dbDeleteDefaultSchedule = async (id: string) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("default_workouts")
     .delete()
     .eq("id", id);
@@ -174,7 +171,7 @@ export const dbDeleteDefaultSchedule = async (id: string) => {
 };
 
 export const dbDeleteDefaultWorkoutName = async (id: string) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("default_workout_name")
     .delete()
     .eq("id", id);
@@ -243,7 +240,7 @@ export const dbInsertDefaultWorkoutName2DefaultWorkoutName = async (
 
 const generateDateRange = (startDate: string, endDate: string): string[] => {
   const dates = [];
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
   const end = new Date(endDate);
 
   while (currentDate <= end) {
@@ -255,6 +252,10 @@ const generateDateRange = (startDate: string, endDate: string): string[] => {
 
   return dates;
 };
+
+interface WithoutId {
+  id?: string;
+}
 
 export const dbInsertDefaultWorkouts2Workouts = async (
   newData: {
@@ -296,7 +297,7 @@ export const dbInsertDefaultWorkouts2Workouts = async (
         start_time: `${date}T${workout.start_time}`,
         location_id: newData.location_id,
       };
-      if ("id" in newWorkout) delete (newWorkout as any).id;
+      if ("id" in newWorkout) delete (newWorkout as WithoutId).id;
       workoutList.push(newWorkout);
     }
   }
