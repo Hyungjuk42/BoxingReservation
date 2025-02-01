@@ -8,6 +8,7 @@ import {
   dbDeleteDefaultWorkoutName,
   dbGetDefaultScheduleList,
   dbGetDefaultWorkoutName,
+  dbDeleteOldDates,
 } from "@/app/api/supabase_api";
 
 import { Schedule } from "@/app/interfaces/interfaces";
@@ -79,7 +80,6 @@ const WorkoutContent: React.FC = () => {
           ? -1
           : 0;
       });
-      console.log(defaultScheduleListRef.current);
     }
     setDayDefaultScheduleList(
       defaultScheduleListRef.current.filter(
@@ -91,15 +91,27 @@ const WorkoutContent: React.FC = () => {
 
   const getDefaultScheduleListName = async () => {
     const res = await dbGetDefaultWorkoutName();
-    console.log(res);
     if (res && !(res instanceof Error)) {
       setDefaultScheduleListName(res);
     }
   };
 
+  const deleteWorkoutsNReservationsBeforeMonths = async (months: number) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - months);
+    await dbDeleteOldDates(
+      "reservations",
+      "reserved_at",
+      getDateForm2Date(date)
+    );
+    await dbDeleteOldDates("workouts", "workout_date", getDateForm2Date(date));
+  };
+
   useEffect(() => {
     getDefaultScheduleList();
     getDefaultScheduleListName();
+    // Delete old data before 12 months
+    deleteWorkoutsNReservationsBeforeMonths(12);
   }, []);
 
   useEffect(() => {

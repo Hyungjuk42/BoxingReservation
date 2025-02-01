@@ -29,6 +29,17 @@ export const dbGetDefaultWorkoutName = async () => {
   return data;
 };
 
+export const dbDeleteReservation = async (id: string) => {
+  const { data, error } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", id);
+  if (error) {
+    return false;
+  }
+  return true;
+};
+
 export const dbGetAttendanceList = async (id: string) => {
   const { data: reservationsData, error } = await supabase
     .from("reservations")
@@ -47,9 +58,9 @@ export const dbGetAttendanceList = async (id: string) => {
         .eq("id", item.user_id);
 
       if (!userData || userData?.length === 0 || userError) {
+        dbDeleteReservation(item.id);
         return null;
       }
-      console.log(userData);
       const first_date = userData?.[0].first_check_in_date;
       return {
         name: userData?.[0].name,
@@ -59,7 +70,6 @@ export const dbGetAttendanceList = async (id: string) => {
       };
     })
   );
-  console.log(listData);
   return listData.filter((item) => item !== null);
 };
 
@@ -137,10 +147,8 @@ export const dbUpdateReservationsRegistration = async (
 };
 
 export const dbDeleteWorkoutSchedule = async (id: string) => {
-  console.log(id);
   const { data, error } = await supabase.from("workouts").delete().eq("id", id);
   if (error) {
-    console.log(data);
     return false;
   }
 
@@ -149,7 +157,6 @@ export const dbDeleteWorkoutSchedule = async (id: string) => {
     .delete()
     .eq("workout_id", id);
   if (reservationsError) {
-    console.log(reservationsData);
     return false;
   }
   return true;
@@ -178,13 +185,28 @@ export const dbDeleteDefaultWorkoutName = async (id: string) => {
 };
 
 export const dbDeleteUser = async (id: string) => {
-  const { data, error } = await supabase.from("profiles").delete().eq("id", id);
-  console.log(data);
+  const { error } = await supabase.from("profiles").delete().eq("id", id);
   if (error) {
-    console.log(data);
     return false;
   }
   return true;
+};
+
+export const dbDeleteOldDates = async (
+  tableName: string,
+  dateColumn: string,
+  targetDate: string
+) => {
+  const { data, error } = await supabase
+    .from(tableName)
+    .delete()
+    .lt(dateColumn, targetDate); // targetDate 이전의 데이터 삭제
+
+  if (error) {
+    console.error("Error deleting data:", error);
+  } else {
+    console.log("Successfully deleted data:", data);
+  }
 };
 
 export const dbInsertWorkout2Workouts = async (newData: object) => {

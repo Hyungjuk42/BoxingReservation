@@ -41,7 +41,6 @@ export default function AddWorkoutsBtn(props: {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(formData);
     const newData = {
       ...formData,
       location_id: props.location,

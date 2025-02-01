@@ -51,7 +51,6 @@ export default function AddWorkoutBtn(props: {
       };
       await dbInsertDefaultWorkout2DefaultWorkouts(newData);
     } else if (props.default === 1) {
-      console.log(formData);
       await dbInsertDefaultWorkoutName2DefaultWorkoutName(formData);
     } else if (props.default === 3) {
       const workout_date = getDateForm2Date(props.date);
@@ -62,7 +61,6 @@ export default function AddWorkoutBtn(props: {
         start_time: start_time,
         location_id: props.location,
       };
-      console.log(newData, props.location);
       await dbInsertWorkout2Workouts(newData);
     }
     closeModal();
