@@ -15,10 +15,10 @@ export default function AddWorkoutBtn(props: {
   children: React.ReactNode;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    workout_name: "",
-    start_time: "",
-  });
+  const [formData, setFormData] = useState<{
+    workout_name?: string;
+    start_time?: string;
+  }>({});
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -52,8 +52,10 @@ export default function AddWorkoutBtn(props: {
         ...formData,
         location_id: props.location,
       };
+      console.log(newData);
       await dbInsertDefaultWorkout2DefaultWorkouts(newData);
     } else if (props.default === 1) {
+      delete formData.start_time;
       await dbInsertDefaultWorkoutName2DefaultWorkoutName(formData);
     } else if (props.default === 3) {
       const workout_date = getDateForm2Date(props.date);
