@@ -96,22 +96,9 @@ const WorkoutContent: React.FC = () => {
     }
   }, []);
 
-  const deleteWorkoutsNReservationsBeforeMonths = async (months: number) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - months);
-    await dbDeleteOldDates(
-      "reservations",
-      "reserved_at",
-      getDateForm2Date(date)
-    );
-    await dbDeleteOldDates("workouts", "workout_date", getDateForm2Date(date));
-  };
-
   useEffect(() => {
     getDefaultScheduleList();
     getDefaultScheduleListName();
-    // Delete old data before 12 months
-    deleteWorkoutsNReservationsBeforeMonths(12);
   }, [getDefaultScheduleList, getDefaultScheduleListName]);
 
   useEffect(() => {

@@ -1,6 +1,17 @@
-import { dbInsertDefaultWorkouts2Workouts } from "@/app/api/supabase_api";
+import {
+  dbInsertDefaultWorkouts2Workouts,
+  dbDeleteOldDates,
+} from "@/app/api/supabase_api";
+import { getDateForm2Date } from "@/app/reservation_content";
 import { Schedule } from "@/app/interfaces/interfaces";
 import React, { useState } from "react";
+
+const deleteWorkoutsNReservationsBeforeMonths = async (months: number) => {
+  const date = new Date();
+  date.setMonth(date.getMonth() - months);
+  await dbDeleteOldDates("reservations", "reserved_at", getDateForm2Date(date));
+  await dbDeleteOldDates("workouts", "workout_date", getDateForm2Date(date));
+};
 
 export default function AddWorkoutsBtn(props: {
   location: number;
@@ -35,17 +46,19 @@ export default function AddWorkoutsBtn(props: {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const newData = {
       ...formData,
       location_id: props.location,
     };
-    await dbInsertDefaultWorkouts2Workouts(
+    dbInsertDefaultWorkouts2Workouts(
       newData,
       props.workouts,
       props.workoutName
     );
+    // Delete old data before 12 months
+    deleteWorkoutsNReservationsBeforeMonths(6);
     closeModal();
     props.rerender();
   }
