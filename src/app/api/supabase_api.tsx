@@ -51,7 +51,7 @@ export const dbGetAttendanceList = async (id: string) => {
     reservationsData.map(async (item) => {
       const { data: userData, error: userError } = await supabase
         .from("profiles")
-        .select("name, first_check_in_date, registration")
+        .select("name, first_check_in_date, first_check_in, registration")
         .eq("id", item.user_id);
 
       if (!userData || userData?.length === 0 || userError) {
@@ -62,6 +62,7 @@ export const dbGetAttendanceList = async (id: string) => {
       return {
         name: userData?.[0].name,
         first_date: first_date ? new Date(first_date) : null,
+        first_chk_in: userData?.[0].first_check_in,
         registration: userData?.[0].registration,
         ...item,
       };
@@ -121,7 +122,7 @@ export const dbUpdateReservationsFirstDate = async (
 ) => {
   const { error } = await supabase
     .from("profiles")
-    .update({ first_check_in_date: first_check_in_date })
+    .update({ first_check_in_date: first_check_in_date, first_check_in: true })
     .eq("id", user_id);
   if (error) {
     return false;

@@ -11,6 +11,7 @@ export interface Attendee {
   name: string;
   attendance: boolean;
   first_date: Date | null;
+  first_chk_in: boolean;
   registration: boolean;
 }
 
