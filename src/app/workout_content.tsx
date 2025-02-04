@@ -8,7 +8,6 @@ import {
   dbDeleteDefaultWorkoutName,
   dbGetDefaultScheduleList,
   dbGetDefaultWorkoutName,
-  dbDeleteOldDates,
 } from "@/app/api/supabase_api";
 
 import { Schedule } from "@/app/interfaces/interfaces";
