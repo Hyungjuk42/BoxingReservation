@@ -57,7 +57,6 @@ const isExpiredDate = (date: Date | null) => {
   const today = new Date();
   const expireDateStr = getDateForm2Date(expireDate);
   const todayStr = getDateForm2Date(today);
-  console.log(expireDateStr, todayStr, expireDateStr < todayStr);
   return expireDateStr < todayStr;
 };
 
