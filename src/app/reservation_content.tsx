@@ -28,6 +28,23 @@ const getSortedAttendanceList = async (id: string) => {
   return newIdList;
 };
 
+const getSortedDayScheduleList = (
+  scheduleList: Array<Schedule>,
+  locationId: number
+) => {
+  const filteredList = scheduleList.filter(
+    (schedule: Schedule) => locationId + 1 === schedule.location_id
+  );
+  const sortedList = filteredList.sort((a, b) => {
+    return a.start_time > b.start_time
+      ? 1
+      : a.start_time < b.start_time
+      ? -1
+      : 0;
+  });
+  return sortedList;
+};
+
 const getExpireDate = (date: Date) => {
   const expireDate = new Date(date);
   expireDate.setDate(expireDate.getDate() + 6);
@@ -38,8 +55,8 @@ const isExpiredDate = (date: Date | null) => {
   if (date === null) return false;
   const expireDate = getExpireDate(date);
   const today = new Date();
-  const expireDateStr = `${expireDate.getFullYear()}-${expireDate.getMonth()}-${expireDate.getDate()}`;
-  const todayStr = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  const expireDateStr = getDateForm2Date(expireDate);
+  const todayStr = getDateForm2Date(today);
   return expireDateStr < todayStr;
 };
 
@@ -79,22 +96,18 @@ const ReservationContent: React.FC = () => {
         scheduleListRef.current = res;
       }
       setDayScheduleList(
-        scheduleListRef.current.filter(
-          (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
-        )
+        getSortedDayScheduleList(scheduleListRef.current, selectedLocation)
       );
       setAttendance([]);
     })();
   }, [selectedDate, selectedLocation]);
 
-  useEffect(() => {
-    setDayScheduleList(
-      scheduleListRef.current.filter(
-        (schedule: Schedule) => selectedLocation + 1 === schedule.location_id
-      )
-    );
-    setAttendance([]);
-  }, [selectedLocation]);
+  // useEffect(() => {
+  //   setDayScheduleList(
+  //     getSortedDayScheduleList(scheduleListRef.current, selectedLocation)
+  //   );
+  //   setAttendance([]);
+  // }, [selectedLocation]);
 
   useEffect(() => {
     setSelectedSchedule(
