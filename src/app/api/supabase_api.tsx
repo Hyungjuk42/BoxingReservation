@@ -144,6 +144,19 @@ export const dbUpdateReservationsRegistration = async (
   return true;
 };
 
+export const dbDeleteWorkoutsAfterDate = async (date: string, location_id: number) => {
+  const { error } = await supabase
+    .from("workouts")
+    .delete()
+    .gte("workout_date", date)
+    .eq("location_id", location_id);
+
+  if (error) {
+    return false;
+  }
+  return true;
+};
+
 export const dbDeleteWorkoutSchedule = async (id: string) => {
   const { error } = await supabase.from("workouts").delete().eq("id", id);
   if (error) {

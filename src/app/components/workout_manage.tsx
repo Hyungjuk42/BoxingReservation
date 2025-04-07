@@ -46,7 +46,9 @@ export default function WorkoutManage(props: {
         ) : (
           <p>선택된 날짜에 스케줄이 없습니다.</p>
         )}
-        {props.children}
+        <div className="flex flex-col justify-end">
+          {props.children}
+        </div>
       </div>
     </>
   );

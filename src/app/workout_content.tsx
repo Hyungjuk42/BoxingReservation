@@ -8,12 +8,14 @@ import {
   dbDeleteDefaultWorkoutName,
   dbGetDefaultScheduleList,
   dbGetDefaultWorkoutName,
+  dbDeleteWorkoutsAfterDate,
 } from "@/app/api/supabase_api";
 
 import { Schedule } from "@/app/interfaces/interfaces";
 
 import { getDateForm2Date } from "./reservation_content";
-import Button from "@/app/components/ui/button_location";
+import ButtonLoc from "@/app/components/ui/button_location";
+import { Button } from "@/components/ui/button";
 import ReactCalendar from "@/app/components/ui/react_calendar";
 import AddWorkoutBtn from "@/app/components/ui/add_workout_btn";
 import AddWorkoutsBtn from "@/app/components/ui/add_workouts_btn";
@@ -76,8 +78,8 @@ const WorkoutContent: React.FC = () => {
         return a.start_time > b.start_time
           ? 1
           : a.start_time < b.start_time
-          ? -1
-          : 0;
+            ? -1
+            : 0;
       });
     }
     setDayDefaultScheduleList(
@@ -128,13 +130,13 @@ const WorkoutContent: React.FC = () => {
         <div className="flex flex-col w-full items-center space-y-2">
           {selectedLocation !== null ? (
             locations.map((location, idx) => (
-              <Button
+              <ButtonLoc
                 key={location}
                 handleClick={() => setSelectedLocation(idx)}
                 selected={locations[selectedLocation] === location}
               >
                 {location}
-              </Button>
+              </ButtonLoc>
             ))
           ) : (
             <h3 className="">추가된 도장 없음</h3>
@@ -149,7 +151,7 @@ const WorkoutContent: React.FC = () => {
           title="운동 스케줄"
           scheduleList={dayScheduleList}
           getTime={getTime2Date}
-          height="calc(100vh - 12rem)"
+          height="calc(100vh - 14rem)"
           handleDeleteSchedule={(schedule) => {
             dbDeleteWorkoutSchedule(schedule.id).then((res) => {
               if (res) {
@@ -175,6 +177,21 @@ const WorkoutContent: React.FC = () => {
             운동 추가
           </AddWorkoutBtn>
         </WorkoutManage>
+        <Button
+          variant="destructive"
+          className="w-full mt-2"
+          onClick={() => {
+            if (confirm(`${getDateForm2Date(selectedDate)} 날짜 이후의 운동을 모두 삭제하시겠습니까?`)) {
+              dbDeleteWorkoutsAfterDate(getDateForm2Date(selectedDate), selectedLocation + 1).then((res) => {
+                if (res) {
+                  getDayScheduleList();
+                }
+              });
+            }
+          }}
+        >
+          운동 전체 삭제
+        </Button>
       </div>
       <div
         style={{ height: "calc(100vh - 6.5rem)" }}
